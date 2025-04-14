@@ -12,45 +12,62 @@
     h1 { color: #996600; margin-bottom: 30px; }
     button { margin: 10px; padding: 15px 30px; font-size: 1.2em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
     button:hover { background-color: #ffbb33; }
-    .petal {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      background: radial-gradient(circle at center, pink 0%, transparent 70%);
-      border-radius: 50%;
-      animation: fall 5s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes fall {
-      0% { transform: translateY(-10vh) rotate(0deg); }
-      100% { transform: translateY(110vh) rotate(360deg); }
-    }
-    #blessing {
-      font-size: 2em;
-      color: #ff6699;
-      position: fixed;
-      top: 40%;
-      width: 100%;
-      opacity: 0;
-      transition: opacity 1s;
-      font-weight: bold;
-    }
+    input, select { margin: 5px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 1em; }
+    #other-sutra-input { display: none; }
+    .petal { position: fixed; width: 20px; height: 20px; background: radial-gradient(circle at center, pink 0%, transparent 70%); border-radius: 50%; animation: fall 5s linear infinite; pointer-events: none; }
+    @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+    #blessing { font-size: 2em; color: #ff6699; position: fixed; top: 40%; width: 100%; opacity: 0; transition: opacity 1s; font-weight: bold; }
   </style>
 </head>
 <body>
   <h1>法喜打卡站</h1>
-  <button onclick="startCheckIn()">開始打卡</button>
-  <br>
-  <button onclick="goLeaderboard()">查看排行榜</button>
+  <div>
+    <input type="text" id="nickname" placeholder="請輸入暱稱（可留空）"><br>
+    <select id="sutra" onchange="checkOther()">
+      <option value="">請選擇佛經</option>
+      <option>準提神咒</option>
+      <option>往生淨土神咒</option>
+      <option>南無地藏菩薩聖號</option>
+      <option>普門品</option>
+      <option>心經</option>
+      <option>大悲咒</option>
+      <option>南無觀世音菩薩聖號</option>
+      <option>南無阿彌陀佛聖號</option>
+      <option>南無藥師琉璃光如來佛號</option>
+      <option>藥師如來灌頂真言</option>
+      <option>金剛經</option>
+      <option>禮佛大懺悔文</option>
+      <option>十小咒</option>
+      <option>佛說阿彌陀經</option>
+      <option>大悲懺</option>
+      <option>法華經</option>
+      <option>地藏懺</option>
+      <option>解冤偈</option>
+      <option>菩薩戒誦戒</option>
+      <option>授幽冥戒界佛事</option>
+      <option value="其他">其他</option>
+    </select><br>
+    <input type="text" id="other-sutra-input" placeholder="請輸入佛經名稱">
+  </div>
+  <button onclick="startCheckIn()">打卡</button>
   <div id="blessing">法喜充滿！</div>
 
   <script>
     const firebaseConfig = {
       databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
-
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
+    function checkOther() {
+      const sutraSelect = document.getElementById('sutra');
+      const otherInput = document.getElementById('other-sutra-input');
+      if (sutraSelect.value === "其他") {
+        otherInput.style.display = "inline-block";
+      } else {
+        otherInput.style.display = "none";
+      }
+    }
 
     function createPetal() {
       const petal = document.createElement('div');
@@ -62,13 +79,22 @@
     }
 
     function startCheckIn() {
-      const nickname = prompt("請輸入你的暱稱（可留空）") || "匿名小菩薩";
+      const nickname = document.getElementById('nickname').value || "匿名小菩薩";
+      let sutra = document.getElementById('sutra').value;
+      if (!sutra) {
+        alert("請選擇佛經種類喔～");
+        return;
+      }
+      if (sutra === "其他") {
+        sutra = document.getElementById('other-sutra-input').value || "未填寫佛經名稱";
+      }
       const today = new Date();
       const dateStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0');
       const timestamp = today.toISOString();
 
       firebase.database().ref('checkins/' + dateStr).push({
         nickname: nickname,
+        sutra: sutra,
         timestamp: timestamp
       }).then(() => {
         triggerEffect();
@@ -87,12 +113,6 @@
         blessing.style.opacity = 0;
       }, 3000);
     }
-
-    function goLeaderboard() {
-      window.location.href = "/leaderboard.html";
-    }
-
-    window.onload = () => {};
   </script>
 </body>
 </html>
