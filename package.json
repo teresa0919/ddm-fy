@@ -1,7 +1,8 @@
+
 {
   "name": "ddm-fy",
   "version": "1.0.0",
-  "description": "佛系念佛打卡系統",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
