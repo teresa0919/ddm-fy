@@ -1,17 +1,18 @@
+
 const express = require('express');
 const path = require('path');
 const app = express();
 
-// 把整個資料夾公開
+// 讓 express 直接服務靜態檔案
 app.use(express.static(__dirname));
 
-// 首頁導向 index.html
+// 首頁
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 這裡抓 Render 給的 Port，不然就用 3000
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// 啟動伺服器，監聽 PORT
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`伺服器啟動囉，port: ${port}`);
 });
