@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法喜打卡排行榜</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <style>
+    body { background-color: #fff8e7; text-align: center; font-family: "Noto Sans TC", sans-serif; padding: 30px; }
+    h1 { color: #996600; margin-bottom: 20px; }
+    table { margin: 20px auto; border-collapse: collapse; width: 90%; max-width: 600px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+    th { background-color: #ffcc66; color: #fff; }
+    .star { font-size: 1.2em; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
+    button:hover { background-color: #ffbb33; }
+  </style>
+</head>
+<body>
+  <h1>法喜打卡排行榜</h1>
+  <button onclick="goBack()">返回打卡頁</button>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>排名</th>
+        <th>暱稱</th>
+        <th>打卡次數</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    async function loadLeaderboard() {
+      const snapshot = await db.ref('checkins').once('value');
+      const data = snapshot.val() || {};
+
+      const userCounts = {};
+
+      for (const day in data) {
+        for (const recordId in data[day]) {
+          const record = data[day][recordId];
+          const name = record.nickname || "匿名小菩薩";
+          if (!userCounts[name]) {
+            userCounts[name] = 0;
+          }
+          userCounts[name]++;
+        }
+      }
+
+      const sortedUsers = Object.entries(userCounts)
+        .sort((a, b) => b[1] - a[1]);
+
+      const tbody = document.querySelector("#leaderboard tbody");
+      sortedUsers.forEach(([name, count], index) => {
+        const tr = document.createElement("tr");
+        let star = "";
+        if (index === 0) star = "⭐";
+        else if (index === 1) star = "🥈";
+        else if (index === 2) star = "🥉";
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${name} <span class="star">${star}</span></td>
+          <td>${count}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function goBack() {
+      window.location.href = "/index.html";
+    }
+
+    loadLeaderboard();
+  </script>
+</body>
+</html>

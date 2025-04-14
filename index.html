@@ -8,25 +8,58 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
   <style>
-    body { background-color: #fff8e7; text-align: center; font-family: "Noto Sans TC", sans-serif; padding: 40px; }
+    body { background-color: #fff8e7; text-align: center; font-family: "Noto Sans TC", sans-serif; padding: 40px; overflow-x: hidden; }
     h1 { color: #996600; margin-bottom: 30px; }
-    button { padding: 15px 30px; font-size: 1.2em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
+    button { margin: 10px; padding: 15px 30px; font-size: 1.2em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
     button:hover { background-color: #ffbb33; }
+    .petal {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at center, pink 0%, transparent 70%);
+      border-radius: 50%;
+      animation: fall 5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+    #blessing {
+      font-size: 2em;
+      color: #ff6699;
+      position: fixed;
+      top: 40%;
+      width: 100%;
+      opacity: 0;
+      transition: opacity 1s;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <h1>法喜打卡站</h1>
   <button onclick="startCheckIn()">開始打卡</button>
+  <br>
+  <button onclick="goLeaderboard()">查看排行榜</button>
+  <div id="blessing">法喜充滿！</div>
 
   <script>
-    // 你的 Firebase 設定
     const firebaseConfig = {
       databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
 
-    // 初始化 Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = 3 + Math.random() * 2 + 's';
+      document.body.appendChild(petal);
+      setTimeout(() => petal.remove(), 5000);
+    }
 
     function startCheckIn() {
       const nickname = prompt("請輸入你的暱稱（可留空）") || "匿名小菩薩";
@@ -38,11 +71,28 @@
         nickname: nickname,
         timestamp: timestamp
       }).then(() => {
-        alert("打卡完成！願您法喜充滿～");
+        triggerEffect();
       }).catch((error) => {
         alert("打卡失敗：" + error.message);
       });
     }
+
+    function triggerEffect() {
+      const blessing = document.getElementById('blessing');
+      blessing.style.opacity = 1;
+      for (let i = 0; i < 30; i++) {
+        setTimeout(createPetal, i * 100);
+      }
+      setTimeout(() => {
+        blessing.style.opacity = 0;
+      }, 3000);
+    }
+
+    function goLeaderboard() {
+      window.location.href = "/leaderboard.html";
+    }
+
+    window.onload = () => {};
   </script>
 </body>
 </html>
