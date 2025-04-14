@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打卡站後台面板</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <style>
+    body { background-color: #fff8e7; text-align: center; font-family: "Noto Sans TC", sans-serif; padding: 30px; }
+    h1 { color: #996600; margin-bottom: 20px; }
+    .stat { margin: 10px; font-size: 1.5em; color: #664400; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 5px 0; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
+    button:hover { background-color: #ffbb33; }
+  </style>
+</head>
+<body>
+  <h1>法喜打卡後台</h1>
+  <div class="stat" id="today-count">今日打卡人數：載入中...</div>
+  <div class="stat" id="week-count">最近7天打卡人數：載入中...</div>
+  <h2 style="color:#996600;">今日打卡小菩薩</h2>
+  <ul id="today-list"></ul>
+  <button onclick="goBack()">返回打卡頁</button>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function goBack() {
+      window.location.href = "/index.html";
+    }
+
+    async function loadDashboard() {
+      const snapshot = await db.ref('checkins').once('value');
+      const data = snapshot.val() || {};
+
+      const today = new Date();
+      const todayStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0');
+
+      const todayData = data[todayStr] || {};
+      const todayCount = Object.keys(todayData).length;
+      document.getElementById("today-count").innerText = `今日打卡人數：${todayCount}`;
+
+      const todayList = document.getElementById("today-list");
+      todayList.innerHTML = "";
+      Object.values(todayData).forEach(record => {
+        const li = document.createElement("li");
+        li.innerText = record.nickname || "匿名小菩薩";
+        todayList.appendChild(li);
+      });
+
+      let weekCount = 0;
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(today.getDate() - 6);
+
+      for (const day in data) {
+        const dayDate = new Date(day);
+        if (dayDate >= sevenDaysAgo && dayDate <= today) {
+          weekCount += Object.keys(data[day]).length;
+        }
+      }
+      document.getElementById("week-count").innerText = `最近7天打卡人數：${weekCount}`;
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
