@@ -2,50 +2,47 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>法喜打卡站 - 每日充電</title>
-    <style>
-        body {
-            background-color: #fff8e7;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: "Noto Sans TC", sans-serif;
-            color: #996600;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 0.5em;
-        }
-        p {
-            font-size: 1.2em;
-            margin-bottom: 1.5em;
-            color: #666;
-        }
-        button {
-            background-color: #ffcc66;
-            border: none;
-            border-radius: 25px;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            cursor: pointer;
-            color: #fff;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #ffbb33;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法喜打卡站</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <style>
+    body { background-color: #fff8e7; text-align: center; font-family: "Noto Sans TC", sans-serif; padding: 40px; }
+    h1 { color: #996600; margin-bottom: 30px; }
+    button { padding: 15px 30px; font-size: 1.2em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
+    button:hover { background-color: #ffbb33; }
+  </style>
 </head>
 <body>
-    <h1>法喜打卡站</h1>
-    <p>每天一點點，法喜滿滿滿！</p>
-    <button onclick="location.href='checkin.html'">開始打卡</button>
+  <h1>法喜打卡站</h1>
+  <button onclick="startCheckIn()">開始打卡</button>
+
+  <script>
+    // 你的 Firebase 設定
+    const firebaseConfig = {
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    // 初始化 Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function startCheckIn() {
+      const nickname = prompt("請輸入你的暱稱（可留空）") || "匿名小菩薩";
+      const today = new Date();
+      const dateStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0');
+      const timestamp = today.toISOString();
+
+      firebase.database().ref('checkins/' + dateStr).push({
+        nickname: nickname,
+        timestamp: timestamp
+      }).then(() => {
+        alert("打卡完成！願您法喜充滿～");
+      }).catch((error) => {
+        alert("打卡失敗：" + error.message);
+      });
+    }
+  </script>
 </body>
 </html>
