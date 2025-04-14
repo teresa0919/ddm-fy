@@ -2,11 +2,202 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>打卡頁面</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打卡頁面 - 月曆版</title>
+  <style>
+    body {
+      background-color: #fff8e7;
+      text-align: center;
+      font-family: "Noto Sans TC", sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #996600;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #ffe0a3;
+    }
+    td {
+      background-color: #fff;
+    }
+    .marked {
+      background-color: #ffcc66;
+      font-weight: bold;
+      color: #fff;
+      border-radius: 50%;
+    }
+    #blessing, #counter, #todayCounter, #achievements {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #888;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #ffcc66;
+      border: none;
+      border-radius: 25px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #ffbb33;
+    }
+  </style>
 </head>
 <body>
-    <h1>這裡是打卡頁面喔！</h1>
-    <p>（之後可以放可愛打卡功能）</p>
+  <h1>法喜打卡站 - 月曆版</h1>
+  <button onclick="startBlessing()">我要打卡</button>
+  <div id="blessing"></div>
+  <div id="counter"></div>
+  <div id="todayCounter"></div>
+  <div id="achievements"></div>
+  <div id="calendar"></div>
+
+  <script>
+    const achievementList = [
+      { count: 10, text: '功德圓滿 Lv.1' },
+      { count: 20, text: '福慧雙增 Lv.2' },
+      { count: 50, text: '慈悲智慧 Lv.3' },
+      { count: 100, text: '無量壽佛 Lv.MAX' }
+    ];
+
+    function updateCounters() {
+      let total = localStorage.getItem('totalBlessings') || 0;
+      document.getElementById('counter').innerText = '已累積打卡：' + total + ' 次！';
+
+      let today = new Date().toLocaleDateString();
+      let storedDate = localStorage.getItem('todayDate') || '';
+      let todayCount = localStorage.getItem('todayBlessings') || 0;
+
+      if (today !== storedDate) {
+        localStorage.setItem('todayDate', today);
+        todayCount = 0;
+        localStorage.setItem('todayBlessings', todayCount);
+      }
+      document.getElementById('todayCounter').innerText = '今日打卡次數：' + todayCount + ' 次！';
+
+      updateCalendar();
+      updateAchievements();
+    }
+
+    function updateAchievements() {
+      let unlocked = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+      const achievementDiv = document.getElementById('achievements');
+      if (unlocked.length === 0) {
+        achievementDiv.innerText = '尚未解鎖任何成就，加油喔！';
+      } else {
+        achievementDiv.innerHTML = '你已解鎖的成就：<br>' + unlocked.map(a => '<span class="unlocked">' + a + '</span>').join('<br>');
+      }
+    }
+
+    function updateCalendar() {
+      let dates = JSON.parse(localStorage.getItem('blessingDates') || '[]');
+      let calendarDiv = document.getElementById('calendar');
+      let today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth();
+
+      let firstDay = new Date(year, month, 1).getDay();
+      let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let table = '<table><thead><tr>';
+      const days = ['日', '一', '二', '三', '四', '五', '六'];
+      for (let d of days) {
+        table += `<th>${d}</th>`;
+      }
+      table += '</tr></thead><tbody><tr>';
+
+      for (let i = 0; i < firstDay; i++) {
+        table += '<td></td>';
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        let dateStr = `${year}/${month + 1}/${day}`;
+        let marked = dates.includes(dateStr) ? 'class="marked"' : '';
+        table += `<td ${marked}>${day}</td>`;
+
+        if ((day + firstDay) % 7 === 0) {
+          table += '</tr><tr>';
+        }
+      }
+
+      table += '</tr></tbody></table>';
+      calendarDiv.innerHTML = table;
+    }
+
+    function checkAchievements(total) {
+      let unlocked = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+      achievementList.forEach(a => {
+        if (total >= a.count && !unlocked.includes(a.text)) {
+          unlocked.push(a.text);
+          alert('成就解鎖！' + a.text + ' ✨');
+        }
+      });
+      localStorage.setItem('unlockedAchievements', JSON.stringify(unlocked));
+    }
+
+    function startBlessing() {
+      let count = localStorage.getItem('blessingCount') || 0;
+      let total = localStorage.getItem('totalBlessings') || 0;
+      let today = new Date().toLocaleDateString();
+      let storedDate = localStorage.getItem('todayDate') || '';
+      let todayCount = localStorage.getItem('todayBlessings') || 0;
+      let dates = JSON.parse(localStorage.getItem('blessingDates') || '[]');
+
+      count++;
+      total++;
+
+      if (today !== storedDate) {
+        localStorage.setItem('todayDate', today);
+        todayCount = 0;
+      }
+      todayCount++;
+
+      if (!dates.includes(today)) {
+        dates.push(today);
+      }
+
+      localStorage.setItem('blessingCount', count);
+      localStorage.setItem('totalBlessings', total);
+      localStorage.setItem('todayBlessings', todayCount);
+      localStorage.setItem('blessingDates', JSON.stringify(dates));
+
+      const blessing = document.getElementById('blessing');
+      blessing.style.opacity = 1;
+
+      if (total >= 100) {
+        blessing.innerText = '無量壽佛！福慧圓滿！✨';
+        localStorage.setItem('totalBlessings', 0);
+      } else {
+        blessing.innerText = '法喜充滿 ✨';
+      }
+
+      document.body.style.backgroundColor = '#fff0c1';
+
+      checkAchievements(total);
+      updateCounters();
+      
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    }
+
+    window.onload = updateCounters;
+  </script>
 </body>
 </html>
