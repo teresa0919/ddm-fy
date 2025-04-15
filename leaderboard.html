@@ -3,13 +3,50 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>排行榜</title>
-  <link rel="stylesheet" href="style.css">
+  <title>法喜排行榜</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background-color: #fffaf0;
+      font-family: "Noto Sans TC", sans-serif;
+      text-align: center;
+      padding: 30px;
+      overflow-x: hidden;
+    }
+    h1 {
+      color: #996600;
+    }
+    .rank-item {
+      background: #ffffffcc;
+      border-radius: 12px;
+      margin: 10px auto;
+      padding: 12px;
+      max-width: 480px;
+      box-shadow: 0 0 8px #e0d8c8;
+    }
+    .rank-item.gold { border-left: 6px solid gold; }
+    .rank-item.silver { border-left: 6px solid silver; }
+    .rank-item.bronze { border-left: 6px solid peru; }
+    .petal {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at center, pink 0%, transparent 70%);
+      border-radius: 50%;
+      animation: fall 5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+    a { display: inline-block; margin-top: 20px; text-decoration: none; color: #996600; font-weight: bold; }
+  </style>
 </head>
 <body>
   <h1>法喜排行榜</h1>
-  <ul id="rankList"></ul>
-  <a href="index.html">回首頁</a>
+  <div id="rankList">載入中...</div>
+  <a href="index.html">返回首頁</a>
 
   <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
@@ -20,6 +57,18 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = 3 + Math.random() * 2 + 's';
+      document.body.appendChild(petal);
+      setTimeout(() => petal.remove(), 5000);
+    }
+    for (let i = 0; i < 20; i++) {
+      setTimeout(() => createPetal(), i * 300);
+    }
+
     async function loadRanks() {
       const snapshot = await db.ref('checkins').once('value');
       const data = snapshot.val() || {};
@@ -28,17 +77,36 @@
       for (const day in data) {
         for (const id in data[day]) {
           const rec = data[day][id];
-          if (!users[rec.nickname]) users[rec.nickname] = 0;
-          users[rec.nickname] += parseInt(rec.count || 1);
+          const name = rec.nickname || "匿名";
+          if (!users[name]) users[name] = { total: 0, logs: [] };
+          users[name].total += parseInt(rec.count || 1);
+          users[name].logs.push({
+            sutra: rec.sutra,
+            count: rec.count,
+            time: rec.timestamp
+          });
         }
       }
 
-      const sorted = Object.entries(users).sort((a, b) => b[1] - a[1]);
-      const list = document.getElementById("rankList");
-      sorted.forEach(([name, count], i) => {
-        const li = document.createElement("li");
-        li.textContent = `第${i+1}名：${name}（${count}次）`;
-        list.appendChild(li);
+      const sorted = Object.entries(users).sort((a, b) => b[1].total - a[1].total);
+      const rankList = document.getElementById("rankList");
+      rankList.innerHTML = "";
+
+      sorted.forEach(([name, info], i) => {
+        const div = document.createElement("div");
+        div.className = "rank-item";
+        if (i === 0) div.classList.add("gold");
+        else if (i === 1) div.classList.add("silver");
+        else if (i === 2) div.classList.add("bronze");
+
+        const star = i === 0 ? "⭐" : i === 1 ? "🥈" : i === 2 ? "🥉" : "";
+
+        div.innerHTML = `<h3>${star} ${i+1} 名：${name}</h3>
+                         <p>總誦經次數：${info.total}</p>
+                         <ul style="text-align:left;padding-left:1.5em;">` +
+                         info.logs.map(log => `<li>${log.sutra} × ${log.count}（${new Date(log.time).toLocaleString()}）</li>`).join("") +
+                         `</ul>`;
+        rankList.appendChild(div);
       });
     }
 
