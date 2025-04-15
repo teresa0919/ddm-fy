@@ -5,27 +5,43 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-function checkIn() {
-  const nickname = document.getElementById('nickname').value || "匿名小菩薩";
-  let sutra = document.getElementById('scripture').value;
-  const otherInput = document.getElementById('otherScripture').value;
-  const count = parseInt(document.getElementById('count').value) || 1;
+function toggleOtherField() {
+  const select = document.getElementById("scripture");
+  const other = document.getElementById("otherInput");
+  if (select.value === "其他") {
+    other.style.display = "inline-block";
+  } else {
+    other.style.display = "none";
+  }
+}
 
-  if (sutra === "other") {
-    if (!otherInput) return alert("請輸入佛經名稱");
-    sutra = otherInput;
+function checkIn() {
+  const nickname = document.getElementById("nickname").value || "匿名小菩薩";
+  let sutra = document.getElementById("scripture").value;
+  const other = document.getElementById("otherInput").value;
+  const count = parseInt(document.getElementById("count").value || "1");
+
+  if (!sutra) return alert("請選擇佛經！");
+  if (sutra === "其他") {
+    if (!other) return alert("請填寫佛經名稱");
+    sutra = other;
   }
 
-  const date = new Date();
-  const dateStr = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
-  const timestamp = date.toISOString();
-
-  db.ref(`checkins/${dateStr}`).push({
+  const now = new Date();
+  const dateStr = now.toISOString().split("T")[0];
+  db.ref('checkins/' + dateStr).push({
     nickname: nickname,
     sutra: sutra,
     count: count,
-    timestamp: timestamp
+    timestamp: now.toISOString()
   }).then(() => {
-    alert("打卡成功！");
+    const msg = document.getElementById("successMessage");
+    const quotes = [
+      "讚嘆您，持經功德無量！",
+      "一念佛號，一道光明！",
+      "願您日日法喜，處處吉祥～",
+      "功不唐捐，願願皆成！"
+    ];
+    msg.textContent = quotes[Math.floor(Math.random() * quotes.length)];
   });
 }
