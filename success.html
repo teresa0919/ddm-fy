@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>打卡成功！</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>打卡成功</title>
+    <style>
+        body { font-family: sans-serif; background: #fff8e1; text-align: center; padding: 50px; }
+        .message { font-size: 24px; color: #6d4c41; margin-top: 20px; }
+    </style>
 </head>
-<body class="success-background">
-  <h1 class="fade-in">打卡成功！</h1>
-  <p id="blessing" class="fade-in-delay"></p>
-  <a href="/">回首頁</a>
+<body>
+    <h1>打卡成功！</h1>
+    <div class="message" id="blessing"></div>
 
-  <script>
-    const blessings = [
-      "願你心想事成，日日是好日。",
-      "願你福慧雙增，廣結善緣。",
-      "願你心寧平和，無事一身輕。",
-      "願你所求如願，所行如意。",
-      "願你法喜充滿，光明自在。"
-    ];
-    document.getElementById('blessing').innerText = blessings[Math.floor(Math.random() * blessings.length)];
-  </script>
+    <script>
+        const blessings = [
+            "願你今日福慧增長！",
+            "南無阿彌陀佛，法喜充滿！",
+            "功德無量，善根深植！",
+            "日日誦經，吉祥如意！",
+            "心中有佛，處處清涼！"
+        ];
+        const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+        document.getElementById("blessing").textContent = randomBlessing;
+    </script>
 </body>
 </html>
