@@ -21,9 +21,26 @@
       <select name="sutra" id="sutra-select" required>
         <option value="">請選擇誦持經文</option>
         <option value="心經">心經</option>
-        <option value="金剛經">金剛經</option>
-        <option value="大悲咒">大悲咒</option>
-        <option value="其他">其他（自行填寫）</option>
+<option value="普門品">普門品</option>
+<option value="金剛經">金剛經</option>
+<option value="佛說阿彌陀經">佛說阿彌陀經</option>
+<option value="大悲咒">大悲咒</option>
+<option value="十小咒">十小咒</option>
+<option value="準提神咒">準提神咒</option>
+<option value="往生淨土神咒">往生淨土神咒</option>
+<option value="大悲懺">大悲懺</option>
+<option value="法華經">法華經</option>
+<option value="地藏懺">地藏懺</option>
+<option value="解冤偈">解冤偈</option>
+<option value="禮佛大懺悔文">禮佛大懺悔文</option>
+<option value="藥師如來灌頂真言">藥師如來灌頂真言</option>
+<option value="菩薩戒誦戒">菩薩戒誦戒</option>
+<option value="授幽冥戒佛事">授幽冥戒佛事</option>
+<option value="南無阿彌陀佛聖號">南無阿彌陀佛聖號</option>
+<option value="南無地藏菩薩聖號">南無地藏菩薩聖號</option>
+<option value="南無觀世音菩薩聖號">南無觀世音菩薩聖號</option>
+<option value="南無藥師琉璃光如來佛號">南無藥師琉璃光如來佛號</option>
+<option value="其他（可自行填寫）">其他（可自行填寫）</option>
       </select>
       <input type="text" name="sutra_other" placeholder="若選其他請填寫" id="sutra-other" style="display:none;">
       <input type="number" name="count" placeholder="誦持次數" required>
@@ -33,7 +50,7 @@
       const s = document.getElementById('sutra-select');
       const o = document.getElementById('sutra-other');
       s.addEventListener('change', () => {
-        o.style.display = s.value === '其他' ? 'block' : 'none';
+        o.style.display = s.value.includes('其他') ? 'block' : 'none';
       });
     </script>
   </main>
