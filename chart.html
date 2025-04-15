@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>佛經統計圖</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background-color: #fffaf0;
+      text-align: center;
+      padding: 2em;
+    }
+    canvas {
+      max-width: 600px;
+      margin: auto;
+    }
+    a {
+      display: inline-block;
+      margin-top: 2em;
+      color: #996600;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>佛經誦持次數統計</h1>
+  <canvas id="sutraChart"></canvas>
+  <a href="index.html">← 回到打卡首頁</a>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    async function loadData() {
+      const snapshot = await db.ref("checkins").once("value");
+      const data = snapshot.val() || {};
+      const stats = {};
+
+      for (const date in data) {
+        for (const key in data[date]) {
+          const entry = data[date][key];
+          const sutra = entry.sutra;
+          const count = parseInt(entry.count || 1);
+          if (!stats[sutra]) stats[sutra] = 0;
+          stats[sutra] += count;
+        }
+      }
+
+      const labels = Object.keys(stats);
+      const values = Object.values(stats);
+
+      const ctx = document.getElementById("sutraChart").getContext("2d");
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "誦經次數",
+            data: values,
+            backgroundColor: [
+              "#f5b041", "#82e0aa", "#85c1e9", "#f1948a", "#bb8fce",
+              "#f7dc6f", "#73c6b6", "#ec7063", "#a9dfbf", "#d2b4de"
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom"
+            },
+            title: {
+              display: true,
+              text: "佛經誦持次數分佈"
+            }
+          }
+        }
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
