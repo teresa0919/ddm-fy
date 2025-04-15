@@ -3,92 +3,71 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>打卡成功</title>
+  <title>打卡成功！</title>
   <style>
     body {
-      background: linear-gradient(to bottom, #fffaf0, #ffeef2);
       font-family: "Noto Sans TC", sans-serif;
+      background: linear-gradient(#fdf6f0, #fff8f6);
       text-align: center;
-      padding: 3em 2em;
-      position: relative;
-      overflow: hidden;
+      padding: 50px 20px;
     }
     h1 {
-      color: #8e44ad;
       font-size: 2.8rem;
-      margin-bottom: 1rem;
+      color: #9c27b0;
+      margin-bottom: 0.5em;
+      animation: fadeIn 2s ease-in-out;
     }
-    .blessing {
-      font-size: 2rem;
+    p {
+      font-size: 1.5rem;
       color: #5d4037;
-      font-weight: bold;
-      margin: 1.5rem 0;
+      margin-bottom: 2em;
+      animation: fadeIn 2.5s ease-in-out;
     }
-    .btn-group {
-      margin-top: 2.5rem;
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
     }
-    .btn {
-      display: inline-block;
-      background: #f8bbd0;
+    .buttons button {
+      background-color: #f8bbd0;
       color: #4e342e;
-      padding: 12px 24px;
-      margin: 0 10px;
-      text-decoration: none;
+      border: none;
+      padding: 10px 20px;
       font-size: 1.1rem;
       border-radius: 8px;
-      transition: background 0.3s;
+      cursor: pointer;
     }
-    .btn:hover {
-      background: #f48fb1;
+    .buttons button:hover {
+      background-color: #f48fb1;
     }
-    .petal {
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background-image: url('https://i.imgur.com/2rkFh6g.png');
-      background-size: cover;
-      animation: fall 10s linear infinite;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-    @keyframes fall {
-      0% { transform: translateY(-60px) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <h1>功德圓滿！</h1>
-  <div class="blessing" id="blessing"></div>
-
-  <div class="btn-group">
-    <a href="index.html" class="btn">返回主頁</a>
-    <a href="leaderboard.html" class="btn">排行榜</a>
+  <h1 id="blessingTitle">功德圓滿！</h1>
+  <p id="blessingText">願你日日清淨、念念安心！</p>
+  <div class="buttons">
+    <button onclick="location.href='index.html'">返回主頁</button>
+    <button onclick="location.href='leaderboard.html'">排行榜</button>
+    <button onclick="playAudio()">播放祝福語音</button>
   </div>
-
-  <audio id="blessingAudio" autoplay>
-    <source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_9b50bc3f4f.mp3?filename=buddhist-meditation-ambient-122327.mp3" type="audio/mpeg">
-    您的瀏覽器不支援音訊播放。
-  </audio>
-
+  <audio id="blessingAudio" src="blessing1.mp3"></audio>
   <script>
     const blessings = [
-      "願你今日福慧雙增，法喜充滿！",
-      "諸佛護佑，智慧現前，吉祥如意～",
-      "善願成就，回向十方，一切功德圓滿！",
-      "今日誦經，功德無量，佛光遍照～",
-      "願你日日清淨、念念安心！"
+      { title: "功德圓滿！", text: "願你日日清淨、念念安心！" },
+      { title: "福慧雙增！", text: "願你廣種福田、智慧光明！" },
+      { title: "法喜充滿！", text: "願你身心自在、善願成就！" },
+      { title: "願願圓滿！", text: "願你所有發願皆蒙加持！" },
+      { title: "善緣具足！", text: "願你行走之處皆是祝福！" }
     ];
-    document.getElementById("blessing").textContent = blessings[Math.floor(Math.random() * blessings.length)];
-
-    // 產生花瓣動畫
-    for (let i = 0; i < 30; i++) {
-      const petal = document.createElement("div");
-      petal.className = "petal";
-      petal.style.left = Math.random() * 100 + "vw";
-      petal.style.animationDelay = Math.random() * 5 + "s";
-      petal.style.animationDuration = 6 + Math.random() * 6 + "s";
-      document.body.appendChild(petal);
+    const r = blessings[Math.floor(Math.random() * blessings.length)];
+    document.getElementById("blessingTitle").innerText = r.title;
+    document.getElementById("blessingText").innerText = r.text;
+    function playAudio() {
+      document.getElementById("blessingAudio").play();
     }
   </script>
 </body>
