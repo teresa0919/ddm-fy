@@ -3,36 +3,16 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>法喜打卡排行榜</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-  <style>
-    body { background-color: #fff8e7; text-align: center; font-family: "Noto Sans TC", sans-serif; padding: 30px; }
-    h1 { color: #996600; margin-bottom: 20px; }
-    table { margin: 20px auto; border-collapse: collapse; width: 90%; max-width: 600px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    th, td { padding: 10px; border-bottom: 1px solid #ddd; }
-    th { background-color: #ffcc66; color: #fff; }
-    .star { font-size: 1.2em; }
-    button { margin-top: 20px; padding: 10px 20px; font-size: 1em; background-color: #ffcc66; border: none; border-radius: 25px; color: #fff; cursor: pointer; }
-    button:hover { background-color: #ffbb33; }
-  </style>
+  <title>排行榜</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>法喜打卡排行榜</h1>
-  <button onclick="goBack()">返回打卡頁</button>
-  <table id="leaderboard">
-    <thead>
-      <tr>
-        <th>排名</th>
-        <th>暱稱</th>
-        <th>打卡次數</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
+  <h1>法喜排行榜</h1>
+  <ul id="rankList"></ul>
+  <a href="index.html">回首頁</a>
 
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
       databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
@@ -40,48 +20,29 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    async function loadLeaderboard() {
+    async function loadRanks() {
       const snapshot = await db.ref('checkins').once('value');
       const data = snapshot.val() || {};
-
-      const userCounts = {};
+      const users = {};
 
       for (const day in data) {
-        for (const recordId in data[day]) {
-          const record = data[day][recordId];
-          const name = record.nickname || "匿名小菩薩";
-          if (!userCounts[name]) {
-            userCounts[name] = 0;
-          }
-          userCounts[name]++;
+        for (const id in data[day]) {
+          const rec = data[day][id];
+          if (!users[rec.nickname]) users[rec.nickname] = 0;
+          users[rec.nickname] += parseInt(rec.count || 1);
         }
       }
 
-      const sortedUsers = Object.entries(userCounts)
-        .sort((a, b) => b[1] - a[1]);
-
-      const tbody = document.querySelector("#leaderboard tbody");
-      sortedUsers.forEach(([name, count], index) => {
-        const tr = document.createElement("tr");
-        let star = "";
-        if (index === 0) star = "⭐";
-        else if (index === 1) star = "🥈";
-        else if (index === 2) star = "🥉";
-
-        tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${name} <span class="star">${star}</span></td>
-          <td>${count}</td>
-        `;
-        tbody.appendChild(tr);
+      const sorted = Object.entries(users).sort((a, b) => b[1] - a[1]);
+      const list = document.getElementById("rankList");
+      sorted.forEach(([name, count], i) => {
+        const li = document.createElement("li");
+        li.textContent = `第${i+1}名：${name}（${count}次）`;
+        list.appendChild(li);
       });
     }
 
-    function goBack() {
-      window.location.href = "/index.html";
-    }
-
-    loadLeaderboard();
+    loadRanks();
   </script>
 </body>
 </html>
