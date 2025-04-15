@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>法喜打卡站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background-color: #fffaf0; font-family: "Noto Sans TC", sans-serif; text-align: center; padding: 40px; }
+    input, select { margin: 8px; padding: 10px; font-size: 1em; border-radius: 8px; border: 1px solid #ccc; }
+    button { background: #ffcc66; border: none; border-radius: 20px; padding: 12px 24px; font-size: 1em; cursor: pointer; }
+    button:hover { background: #ffbb33; }
+    #otherInput { display: none; }
+  </style>
+</head>
+<body>
+  <h1>法喜打卡站</h1>
+  <input type="text" id="nickname" placeholder="請輸入您的暱稱"><br>
+  <select id="scripture" onchange="toggleOther()">
+    <option value="">請選擇今日誦持的經文</option>
+    <option value="心經">心經</option>
+<option value="普門品">普門品</option>
+<option value="金剛經">金剛經</option>
+<option value="佛說阿彌陀經">佛說阿彌陀經</option>
+<option value="大悲咒">大悲咒</option>
+<option value="十小咒">十小咒</option>
+<option value="準提神咒">準提神咒</option>
+<option value="往生淨土神咒">往生淨土神咒</option>
+<option value="大悲懺">大悲懺</option>
+<option value="法華經">法華經</option>
+<option value="地藏懺">地藏懺</option>
+<option value="解冤偈">解冤偈</option>
+<option value="禮佛大懺悔文">禮佛大懺悔文</option>
+<option value="藥師如來灌頂真言">藥師如來灌頂真言</option>
+<option value="菩薩戒誦戒">菩薩戒誦戒</option>
+<option value="授幽冥戒佛事">授幽冥戒佛事</option>
+<option value="南無阿彌陀佛聖號">南無阿彌陀佛聖號</option>
+<option value="南無地藏菩薩聖號">南無地藏菩薩聖號</option>
+<option value="南無觀世音菩薩聖號">南無觀世音菩薩聖號</option>
+<option value="南無藥師琉璃光如來佛號">南無藥師琉璃光如來佛號</option>
+<option value="其他（可自行填寫）">其他（可自行填寫）</option>
+  </select><br>
+  <input type="text" id="otherInput" placeholder="請輸入自訂佛經名稱"><br>
+  <input type="number" id="count" placeholder="請輸入誦經次數"><br>
+  <button onclick="checkIn()">打卡</button>
+
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function toggleOther() {
+      const sel = document.getElementById("scripture");
+      const other = document.getElementById("otherInput");
+      other.style.display = sel.value.includes("其他") ? "inline-block" : "none";
+    }
+
+    function checkIn() {
+      const name = document.getElementById("nickname").value || "匿名小菩薩";
+      let sutra = document.getElementById("scripture").value;
+      const count = parseInt(document.getElementById("count").value || "1");
+      if (!sutra) return alert("請選擇一部經文！");
+      if (sutra.includes("其他")) {
+        const other = document.getElementById("otherInput").value;
+        if (!other) return alert("請輸入自訂佛經名稱！");
+        sutra = other;
+      }
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0];
+      db.ref('checkins/' + dateStr).push({
+        nickname: name,
+        sutra: sutra,
+        count: count,
+        timestamp: now.toISOString()
+      }).then(() => {
+        alert("打卡成功！");
+      });
+    }
+  </script>
+</body>
+</html>
