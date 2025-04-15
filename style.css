@@ -1,11 +1,86 @@
+
 body {
-  font-family: "Noto Sans TC", sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   background-color: #fffaf0;
+  color: #333;
   margin: 0;
-  padding: 2rem;
-  text-align: center;
+  padding: 0;
 }
-input, select, button {
-  margin: 0.5rem;
-  padding: 0.5rem;
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem 1rem;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: #734c9e;
+  font-weight: bold;
+  padding-bottom: 0.2rem;
+  border-bottom: 2px solid transparent;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  border-bottom: 2px solid #f9c2ce;
+}
+
+main {
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: auto;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+h1, h2 {
+  color: #a38bd4;
+}
+
+form input, form select, form button {
+  display: block;
+  width: 100%;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+form button {
+  background-color: #f3b46f;
+  color: white;
+  border: none;
+  transition: 0.2s;
+}
+
+form button:hover {
+  background-color: #e69f4d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 3rem;
 }
