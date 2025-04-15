@@ -1,25 +1,11 @@
-
 body {
-  background-color: #fff8e7;
   font-family: "Noto Sans TC", sans-serif;
+  background-color: #fffaf0;
+  margin: 0;
+  padding: 2rem;
   text-align: center;
-  padding: 40px;
 }
-h1 {
-  color: #996600;
-}
-input, select {
-  margin: 5px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 1em;
-}
-button {
-  padding: 10px 20px;
-  background-color: #ffcc66;
-  border: none;
-  border-radius: 20px;
-  font-size: 1em;
-  cursor: pointer;
+input, select, button {
+  margin: 0.5rem;
+  padding: 0.5rem;
 }

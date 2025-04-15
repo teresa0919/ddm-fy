@@ -1,37 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <title>法喜打卡站</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      background-color: #fffaf0;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-    header, nav {
-      background-color: #f8c8dc;
-      text-align: center;
-      padding: 1rem;
-    }
-    nav a {
-      margin: 0 1rem;
-      color: #333;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    main {
-      padding: 2rem;
-      text-align: center;
-    }
-    h1 {
-      color: #9b59b6;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
@@ -43,8 +16,26 @@
   </header>
   <main>
     <h1>法喜打卡站</h1>
-    <p>每天一點點，法喜滿滿滿！</p>
-    <p>請從上方選單進行打卡、查看排行榜或統計。</p>
+    <form action="success.html" method="get">
+      <input type="text" name="nickname" placeholder="請輸入暱稱" required>
+      <select name="sutra" id="sutra-select" required>
+        <option value="">請選擇誦持經文</option>
+        <option value="心經">心經</option>
+        <option value="金剛經">金剛經</option>
+        <option value="大悲咒">大悲咒</option>
+        <option value="其他">其他（自行填寫）</option>
+      </select>
+      <input type="text" name="sutra_other" placeholder="若選其他請填寫" id="sutra-other" style="display:none;">
+      <input type="number" name="count" placeholder="誦持次數" required>
+      <button type="submit">打卡</button>
+    </form>
+    <script>
+      const s = document.getElementById('sutra-select');
+      const o = document.getElementById('sutra-other');
+      s.addEventListener('change', () => {
+        o.style.display = s.value === '其他' ? 'block' : 'none';
+      });
+    </script>
   </main>
 </body>
 </html>

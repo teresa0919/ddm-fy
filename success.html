@@ -1,69 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <title>打卡成功</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      background: linear-gradient(#fff9f0, #ffeef2);
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #9c27b0;
-      animation: fadeIn 1.5s ease-in-out;
-    }
-    .blessing {
-      font-size: 1.5rem;
-      color: #5d4037;
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-      animation: fadeIn 2s ease-in-out;
-    }
-    .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-    }
-    .buttons a {
-      background-color: #f8bbd0;
-      color: #4e342e;
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      text-decoration: none;
-    }
-    .buttons a:hover {
-      background-color: #f48fb1;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1 id="blessingTitle">功德圓滿！</h1>
-  <div class="blessing" id="blessingText">願你日日清淨、念念安心！</div>
-  <div class="buttons">
-    <a href="index.html">返回主頁</a>
-    <a href="leaderboard.html">排行榜</a>
-  </div>
-  <script>
-    const blessings = [
-      { title: "功德圓滿！", text: "願你日日清淨、念念安心！" },
-      { title: "福慧雙增！", text: "願你廣種福田、智慧光明！" },
-      { title: "法喜充滿！", text: "願你身心自在、善願成就！" },
-      { title: "願願圓滿！", text: "願你所有發願皆蒙加持！" },
-      { title: "善緣具足！", text: "願你行走之處皆是祝福！" }
-    ];
-    const r = blessings[Math.floor(Math.random() * blessings.length)];
-    document.getElementById("blessingTitle").textContent = r.title;
-    document.getElementById("blessingText").textContent = r.text;
-  </script>
+  <h1>功德圓滿！</h1>
+  <p>願你日日清淨，念念安心！</p>
+  <a href="index.html">回首頁</a> | <a href="leaderboard.html">排行榜</a>
 </body>
 </html>

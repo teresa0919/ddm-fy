@@ -1,95 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>誦經統計圖表</title>
+  <meta charset="UTF-8">
+  <title>統計圖表</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #fdfaf5;
-      padding: 2rem;
-      text-align: center;
-    }
-    canvas {
-      margin: 2rem auto;
-    }
-    h2 {
-      color: #734c9e;
-    }
-    .bar-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      margin: 2rem auto;
-      max-width: 500px;
-    }
-    .bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.5rem;
-      width: 100%;
-    }
-    .bar-label {
-      width: 8rem;
-      text-align: right;
-      margin-right: 0.5rem;
-    }
-    .bar-visual {
-      height: 16px;
-      background-color: #a38bd4;
-      border-radius: 8px;
-    }
-    .bar-count {
-      margin-left: 0.5rem;
-      font-size: 0.9rem;
-      color: #555;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <h2>佛經誦持統計</h2>
-  <canvas id="pieChart" width="300" height="300"></canvas>
-  <div class="bar-container" id="barStats"></div>
-
+  <canvas id="chart" width="300" height="300"></canvas>
   <script>
-    const sutraStats = {
-      "心經": 12,
-      "大悲咒": 8,
-      "金剛經": 5,
-      "普門品": 10,
-      "藥師灌頂真言": 4,
-      "禮佛大懺悔文": 6
-    };
-
-    const ctx = document.getElementById("pieChart").getContext("2d");
+    const ctx = document.getElementById("chart").getContext("2d");
     new Chart(ctx, {
       type: "pie",
       data: {
-        labels: Object.keys(sutraStats),
+        labels: ["心經", "金剛經", "大悲咒"],
         datasets: [{
-          data: Object.values(sutraStats),
-          backgroundColor: ["#f9c74f", "#f9844a", "#90be6d", "#577590", "#f8961e", "#a38bd4"]
+          data: [10, 6, 4],
+          backgroundColor: ["#f9c74f", "#f9844a", "#90be6d"]
         }]
-      },
-      options: {
-        plugins: { legend: { display: false } }
       }
-    });
-
-    const maxValue = Math.max(...Object.values(sutraStats));
-    const container = document.getElementById("barStats");
-    Object.entries(sutraStats).forEach(([sutra, count]) => {
-      const bar = document.createElement("div");
-      bar.className = "bar";
-      bar.innerHTML = `
-        <div class="bar-label">${sutra}</div>
-        <div class="bar-visual" style="width: ${(count / maxValue) * 100}%"></div>
-        <div class="bar-count">${count}</div>
-      `;
-      container.appendChild(bar);
     });
   </script>
 </body>
