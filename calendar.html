@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>月曆打卡記錄</title>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isoWeek.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: "Noto Sans TC", sans-serif; background: #fffaf0; text-align: center; padding: 2em; }
+    h1 { color: #996600; }
+    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; max-width: 500px; margin: auto; }
+    .day { padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 8px; min-height: 80px; position: relative; }
+    .day.lotus::after {
+      content: "❀"; position: absolute; bottom: 5px; right: 5px; font-size: 1.2em; color: #e91e63;
+    }
+    .day.today { background: #fdf3d0; border: 2px solid #f5b041; }
+    .day .date { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>本月打卡月曆</h1>
+  <div id="calendar" class="calendar"></div>
+  <a href="index.html">← 回打卡首頁</a>
+
+  <script>
+    dayjs.extend(window.dayjs_plugin_isoWeek);
+    const today = dayjs();
+    const thisMonth = today.format('YYYY-MM');
+    const startOfMonth = today.startOf('month');
+    const endOfMonth = today.endOf('month');
+    const startDay = startOfMonth.isoWeekday() % 7;
+    const daysInMonth = endOfMonth.date();
+
+    const calendar = document.getElementById("calendar");
+
+    const firebaseConfig = {
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const renderCalendar = (activeDates) => {
+      for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement("div");
+        calendar.appendChild(empty);
+      }
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        const dateStr = thisMonth + '-' + String(i).padStart(2, '0');
+        const div = document.createElement("div");
+        div.className = "day" + (today.date() === i ? " today" : "");
+        if (activeDates.includes(dateStr)) div.classList.add("lotus");
+        div.innerHTML = `<div class="date">${i}</div>`;
+        calendar.appendChild(div);
+      }
+    };
+
+    async function loadCheckinDays() {
+      const snap = await db.ref('checkins').once('value');
+      const data = snap.val() || {};
+      const activeDates = Object.keys(data).filter(key => key.startsWith(thisMonth));
+      renderCalendar(activeDates);
+    }
+
+    loadCheckinDays();
+  </script>
+</body>
+</html>
