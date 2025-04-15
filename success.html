@@ -52,9 +52,7 @@
   <div class="buttons">
     <button onclick="location.href='index.html'">返回主頁</button>
     <button onclick="location.href='leaderboard.html'">排行榜</button>
-    <button onclick="playAudio()">播放祝福語音</button>
   </div>
-  <audio id="blessingAudio" src="blessing1.mp3"></audio>
   <script>
     const blessings = [
       { title: "功德圓滿！", text: "願你日日清淨、念念安心！" },
@@ -66,9 +64,6 @@
     const r = blessings[Math.floor(Math.random() * blessings.length)];
     document.getElementById("blessingTitle").innerText = r.title;
     document.getElementById("blessingText").innerText = r.text;
-    function playAudio() {
-      document.getElementById("blessingAudio").play();
-    }
   </script>
 </body>
 </html>
