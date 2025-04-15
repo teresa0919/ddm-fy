@@ -1,27 +1,71 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>打卡成功</title>
-    <style>
-        body { font-family: sans-serif; background: #fff8e1; text-align: center; padding: 50px; }
-        .message { font-size: 24px; color: #6d4c41; margin-top: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>打卡成功</title>
+  <style>
+    body {
+      background-color: #fffbe6;
+      font-family: "Noto Sans TC", sans-serif;
+      text-align: center;
+      padding: 3em;
+      overflow: hidden;
+    }
+    h1 {
+      color: #8e44ad;
+      font-size: 2em;
+    }
+    .blessing {
+      font-size: 1.2em;
+      color: #6d4c41;
+      margin-top: 1em;
+    }
+    .petal {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, pink 30%, transparent 30%);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>打卡成功！</h1>
-    <div class="message" id="blessing"></div>
+  <h1>打卡成功！</h1>
+  <div class="blessing" id="blessing"></div>
+  <audio id="blessingAudio" autoplay></audio>
+  <script>
+    const blessings = [
+      "福慧圓滿，功德無量！",
+      "願你心想事成，日日清淨！",
+      "念念不忘佛，時時皆安樂！",
+      "今日誦經，法喜充滿！"
+    ];
+    const sounds = ["blessing1.mp3", "blessing2.mp3"];
 
-    <script>
-        const blessings = [
-            "願你今日福慧增長！",
-            "南無阿彌陀佛，法喜充滿！",
-            "功德無量，善根深植！",
-            "日日誦經，吉祥如意！",
-            "心中有佛，處處清涼！"
-        ];
-        const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
-        document.getElementById("blessing").textContent = randomBlessing;
-    </script>
+    document.getElementById("blessing").textContent = blessings[Math.floor(Math.random() * blessings.length)];
+    document.getElementById("blessingAudio").src = sounds[Math.floor(Math.random() * sounds.length)];
+
+    for (let i = 0; i < 30; i++) {
+      let petal = document.createElement("div");
+      petal.className = "petal";
+      petal.style.left = Math.random() * 100 + "vw";
+      petal.style.animationDuration = (5 + Math.random() * 5) + "s";
+      petal.style.animationDelay = Math.random() * 5 + "s";
+      document.body.appendChild(petal);
+    }
+  </script>
 </body>
 </html>
