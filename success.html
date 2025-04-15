@@ -2,56 +2,56 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <title>打卡成功！</title>
+  <meta charset="UTF-8">
+  <title>打卡成功</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: "Noto Sans TC", sans-serif;
-      background: linear-gradient(#fdf6f0, #fff8f6);
+      background: linear-gradient(#fff9f0, #ffeef2);
       text-align: center;
-      padding: 50px 20px;
+      padding: 3rem 1rem;
     }
     h1 {
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       color: #9c27b0;
-      margin-bottom: 0.5em;
-      animation: fadeIn 2s ease-in-out;
+      animation: fadeIn 1.5s ease-in-out;
     }
-    p {
+    .blessing {
       font-size: 1.5rem;
       color: #5d4037;
-      margin-bottom: 2em;
-      animation: fadeIn 2.5s ease-in-out;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      animation: fadeIn 2s ease-in-out;
     }
     .buttons {
       display: flex;
       justify-content: center;
-      gap: 1rem;
+      gap: 1.5rem;
     }
-    .buttons button {
+    .buttons a {
       background-color: #f8bbd0;
       color: #4e342e;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1.1rem;
+      padding: 0.8rem 1.5rem;
       border-radius: 8px;
-      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
     }
-    .buttons button:hover {
+    .buttons a:hover {
       background-color: #f48fb1;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
   <h1 id="blessingTitle">功德圓滿！</h1>
-  <p id="blessingText">願你日日清淨、念念安心！</p>
+  <div class="blessing" id="blessingText">願你日日清淨、念念安心！</div>
   <div class="buttons">
-    <button onclick="location.href='index.html'">返回主頁</button>
-    <button onclick="location.href='leaderboard.html'">排行榜</button>
+    <a href="index.html">返回主頁</a>
+    <a href="leaderboard.html">排行榜</a>
   </div>
   <script>
     const blessings = [
@@ -62,8 +62,8 @@
       { title: "善緣具足！", text: "願你行走之處皆是祝福！" }
     ];
     const r = blessings[Math.floor(Math.random() * blessings.length)];
-    document.getElementById("blessingTitle").innerText = r.title;
-    document.getElementById("blessingText").innerText = r.text;
+    document.getElementById("blessingTitle").textContent = r.title;
+    document.getElementById("blessingText").textContent = r.text;
   </script>
 </body>
 </html>

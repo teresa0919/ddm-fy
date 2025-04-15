@@ -1,41 +1,4 @@
 
-const firebaseConfig = {
-  databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-function toggleOtherField() {
-  const select = document.getElementById("scripture");
-  const other = document.getElementById("otherInput");
-  if (select.value === "其他") {
-    other.style.display = "inline-block";
-  } else {
-    other.style.display = "none";
-  }
-}
-
-function checkIn() {
-  const nickname = document.getElementById("nickname").value || "匿名小菩薩";
-  let sutra = document.getElementById("scripture").value;
-  const other = document.getElementById("otherInput").value;
-  const count = parseInt(document.getElementById("count").value || "1");
-
-  if (!sutra) return alert("請選擇佛經！");
-  if (sutra === "其他") {
-    if (!other) return alert("請填寫佛經名稱");
-    sutra = other;
-  }
-
-  const now = new Date();
-  const dateStr = now.toISOString().split("T")[0];
-
-  db.ref('checkins/' + dateStr).push({
-    nickname: nickname,
-    sutra: sutra,
-    count: count,
-    timestamp: now.toISOString()
-  }).then(() => {
-    window.location.href = "success.html";
-  });
-}
+// main.js：處理打卡資料送出（Firebase 相關程式可依環境補上）
+console.log('main.js loaded');
+// Placeholder for Firebase submission

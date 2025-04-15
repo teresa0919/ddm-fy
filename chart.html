@@ -3,71 +3,93 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>佛經誦持統計圖表</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>誦經統計圖表</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: "Noto Sans TC", sans-serif;
-      background-color: #fefaf6;
-      padding: 40px;
+      font-family: sans-serif;
+      background: #fdfaf5;
+      padding: 2rem;
       text-align: center;
     }
-    h1 {
-      color: #8e44ad;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    canvas {
+      margin: 2rem auto;
+    }
+    h2 {
+      color: #734c9e;
     }
     .bar-container {
-      max-width: 600px;
-      margin: 0 auto;
-      text-align: left;
-    }
-    .bar-item {
-      margin-bottom: 1.5rem;
-    }
-    .bar-label {
-      font-size: 1.2rem;
-      margin-bottom: 4px;
-      font-weight: 500;
-      color: #4e342e;
-    }
-    .bar-count {
-      font-size: 1rem;
-      color: #6d4c41;
-      margin-bottom: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin: 2rem auto;
+      max-width: 500px;
     }
     .bar {
-      height: 20px;
-      background: linear-gradient(to right, #f8bbd0, #f48fb1);
-      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      width: 100%;
+    }
+    .bar-label {
+      width: 8rem;
+      text-align: right;
+      margin-right: 0.5rem;
+    }
+    .bar-visual {
+      height: 16px;
+      background-color: #a38bd4;
+      border-radius: 8px;
+    }
+    .bar-count {
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>佛經誦持統計圖表</h1>
-  <div class="bar-container" id="stats"></div>
+  <h2>佛經誦持統計</h2>
+  <canvas id="pieChart" width="300" height="300"></canvas>
+  <div class="bar-container" id="barStats"></div>
 
   <script>
-    const data = [
-      { sutra: "心經", count: 128 },
-      { sutra: "大悲咒", count: 95 },
-      { sutra: "金剛經", count: 72 },
-      { sutra: "普門品", count: 45 },
-      { sutra: "佛說阿彌陀經", count: 28 },
-      { sutra: "準提神咒", count: 12 }
-    ];
+    const sutraStats = {
+      "心經": 12,
+      "大悲咒": 8,
+      "金剛經": 5,
+      "普門品": 10,
+      "藥師灌頂真言": 4,
+      "禮佛大懺悔文": 6
+    };
 
-    const maxCount = Math.max(...data.map(d => d.count));
-    const container = document.getElementById("stats");
+    const ctx = document.getElementById("pieChart").getContext("2d");
+    new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: Object.keys(sutraStats),
+        datasets: [{
+          data: Object.values(sutraStats),
+          backgroundColor: ["#f9c74f", "#f9844a", "#90be6d", "#577590", "#f8961e", "#a38bd4"]
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } }
+      }
+    });
 
-    data.forEach(d => {
-      const item = document.createElement("div");
-      item.className = "bar-item";
-      item.innerHTML = `
-        <div class="bar-label">${d.sutra}</div>
-        <div class="bar-count">${d.count} 次</div>
-        <div class="bar" style="width: ${(d.count / maxCount) * 100}%"></div>
+    const maxValue = Math.max(...Object.values(sutraStats));
+    const container = document.getElementById("barStats");
+    Object.entries(sutraStats).forEach(([sutra, count]) => {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.innerHTML = `
+        <div class="bar-label">${sutra}</div>
+        <div class="bar-visual" style="width: ${(count / maxValue) * 100}%"></div>
+        <div class="bar-count">${count}</div>
       `;
-      container.appendChild(item);
+      container.appendChild(bar);
     });
   </script>
 </body>
