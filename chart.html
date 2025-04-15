@@ -2,91 +2,73 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>佛經統計圖</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <meta charset="UTF-8" />
+  <title>佛經誦持統計圖表</title>
   <style>
     body {
       font-family: "Noto Sans TC", sans-serif;
-      background-color: #fffaf0;
+      background-color: #fefaf6;
+      padding: 40px;
       text-align: center;
-      padding: 2em;
     }
-    canvas {
+    h1 {
+      color: #8e44ad;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .bar-container {
       max-width: 600px;
-      margin: auto;
+      margin: 0 auto;
+      text-align: left;
     }
-    a {
-      display: inline-block;
-      margin-top: 2em;
-      color: #996600;
-      text-decoration: none;
-      font-weight: bold;
+    .bar-item {
+      margin-bottom: 1.5rem;
+    }
+    .bar-label {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+      font-weight: 500;
+      color: #4e342e;
+    }
+    .bar-count {
+      font-size: 1rem;
+      color: #6d4c41;
+      margin-bottom: 6px;
+    }
+    .bar {
+      height: 20px;
+      background: linear-gradient(to right, #f8bbd0, #f48fb1);
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>佛經誦持次數統計</h1>
-  <canvas id="sutraChart"></canvas>
-  <a href="index.html">← 回到打卡首頁</a>
+  <h1>佛經誦持統計圖表</h1>
+  <div class="bar-container" id="stats"></div>
 
   <script>
-    const firebaseConfig = {
-      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const data = [
+      { sutra: "心經", count: 128 },
+      { sutra: "大悲咒", count: 95 },
+      { sutra: "金剛經", count: 72 },
+      { sutra: "普門品", count: 45 },
+      { sutra: "佛說阿彌陀經", count: 28 },
+      { sutra: "準提神咒", count: 12 }
+    ];
 
-    async function loadData() {
-      const snapshot = await db.ref("checkins").once("value");
-      const data = snapshot.val() || {};
-      const stats = {};
+    const maxCount = Math.max(...data.map(d => d.count));
+    const container = document.getElementById("stats");
 
-      for (const date in data) {
-        for (const key in data[date]) {
-          const entry = data[date][key];
-          const sutra = entry.sutra;
-          const count = parseInt(entry.count || 1);
-          if (!stats[sutra]) stats[sutra] = 0;
-          stats[sutra] += count;
-        }
-      }
-
-      const labels = Object.keys(stats);
-      const values = Object.values(stats);
-
-      const ctx = document.getElementById("sutraChart").getContext("2d");
-      new Chart(ctx, {
-        type: "pie",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "誦經次數",
-            data: values,
-            backgroundColor: [
-              "#f5b041", "#82e0aa", "#85c1e9", "#f1948a", "#bb8fce",
-              "#f7dc6f", "#73c6b6", "#ec7063", "#a9dfbf", "#d2b4de"
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "bottom"
-            },
-            title: {
-              display: true,
-              text: "佛經誦持次數分佈"
-            }
-          }
-        }
-      });
-    }
-
-    loadData();
+    data.forEach(d => {
+      const item = document.createElement("div");
+      item.className = "bar-item";
+      item.innerHTML = `
+        <div class="bar-label">${d.sutra}</div>
+        <div class="bar-count">${d.count} 次</div>
+        <div class="bar" style="width: ${(d.count / maxCount) * 100}%"></div>
+      `;
+      container.appendChild(item);
+    });
   </script>
 </body>
 </html>
