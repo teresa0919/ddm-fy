@@ -1,26 +1,66 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>統計圖表</title>
+  <title>佛經統計圖表</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: "Noto Sans TC", sans-serif; background-color: #fffaf0; text-align: center; padding: 2rem; }
+    canvas { margin-top: 2rem; }
+    .bar-container { margin-top: 3rem; max-width: 500px; margin-inline: auto; text-align: left; }
+    .bar-item { margin: 0.5rem 0; }
+    .bar-label { display: inline-block; width: 140px; text-align: right; margin-right: 10px; }
+    .bar-fill { display: inline-block; height: 16px; border-radius: 8px; background-color: #a38bd4; vertical-align: middle; }
+    .bar-count { margin-left: 10px; display: inline-block; min-width: 24px; }
+  </style>
 </head>
 <body>
   <h2>佛經誦持統計</h2>
-  <canvas id="chart" width="300" height="300"></canvas>
+  <canvas id="chart" width="320" height="320"></canvas>
+
+  <div class="bar-container" id="barContainer"></div>
+
   <script>
+    const data = {
+      "心經": 18,
+      "金剛經": 12,
+      "大悲咒": 14,
+      "普門品": 9,
+      "藥師如來灌頂真言": 5
+    };
+
     const ctx = document.getElementById("chart").getContext("2d");
     new Chart(ctx, {
       type: "pie",
       data: {
-        labels: ["心經", "金剛經", "大悲咒"],
+        labels: Object.keys(data),
         datasets: [{
-          data: [10, 6, 4],
-          backgroundColor: ["#f9c74f", "#f9844a", "#90be6d"]
+          data: Object.values(data),
+          backgroundColor: ["#f9c74f", "#f9844a", "#90be6d", "#577590", "#f8961e"]
         }]
+      },
+      options: {
+        plugins: {
+          legend: { position: "bottom" }
+        }
       }
     });
+
+    const max = Math.max(...Object.values(data));
+    const container = document.getElementById("barContainer");
+
+    for (const [sutra, count] of Object.entries(data)) {
+      const width = Math.round((count / max) * 100);
+      container.innerHTML += `
+        <div class="bar-item">
+          <span class="bar-label">${sutra}</span>
+          <span class="bar-fill" style="width:${width}%"></span>
+          <span class="bar-count">${count}</span>
+        </div>
+      `;
+    }
   </script>
 </body>
 </html>
