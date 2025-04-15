@@ -2,67 +2,67 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>打卡成功</title>
   <style>
     body {
-      background-color: #fffbe6;
+      background: #fffaf0;
       font-family: "Noto Sans TC", sans-serif;
       text-align: center;
       padding: 3em;
+      position: relative;
       overflow: hidden;
     }
     h1 {
-      color: #8e44ad;
-      font-size: 2em;
+      color: #6d4c41;
+      font-size: 2rem;
     }
     .blessing {
-      font-size: 1.2em;
-      color: #6d4c41;
-      margin-top: 1em;
+      margin-top: 2rem;
+      font-size: 1.5rem;
+      color: #8d6e63;
+      font-weight: 500;
     }
     .petal {
       position: absolute;
-      width: 20px;
-      height: 20px;
-      background: radial-gradient(circle, pink 30%, transparent 30%);
-      border-radius: 50%;
-      opacity: 0.8;
-      animation: fall linear infinite;
+      width: 24px;
+      height: 24px;
+      background: url('https://cdn-icons-png.flaticon.com/512/7616/7616360.png') no-repeat center;
+      background-size: cover;
+      animation: fall 8s linear infinite;
     }
     @keyframes fall {
-      0% {
-        transform: translateY(-50px) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(-40px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <h1>打卡成功！</h1>
+  <h1>功德圓滿！</h1>
   <div class="blessing" id="blessing"></div>
-  <audio id="blessingAudio" autoplay></audio>
+
+  <!-- 音效播放 -->
+  <audio id="blessingSound" autoplay>
+    <source src="https://cdn.pixabay.com/audio/2023/03/01/audio_8ad0c942b3.mp3" type="audio/mpeg">
+    您的瀏覽器不支援音訊播放。
+  </audio>
+
   <script>
     const blessings = [
-      "福慧圓滿，功德無量！",
-      "願你心想事成，日日清淨！",
-      "念念不忘佛，時時皆安樂！",
-      "今日誦經，法喜充滿！"
+      "願你今日福慧雙增，法喜充滿！",
+      "功德無量，日日清淨，念念歡喜。",
+      "善願成就，佛光護佑～",
+      "今日一念佛，勝造七寶塔！",
+      "願您一心念佛，安樂自在。"
     ];
-    const sounds = ["blessing1.mp3", "blessing2.mp3"];
+    const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+    document.getElementById("blessing").textContent = randomBlessing;
 
-    document.getElementById("blessing").textContent = blessings[Math.floor(Math.random() * blessings.length)];
-    document.getElementById("blessingAudio").src = sounds[Math.floor(Math.random() * sounds.length)];
-
-    for (let i = 0; i < 30; i++) {
-      let petal = document.createElement("div");
+    // 動態生成花瓣
+    for (let i = 0; i < 20; i++) {
+      const petal = document.createElement("div");
       petal.className = "petal";
       petal.style.left = Math.random() * 100 + "vw";
-      petal.style.animationDuration = (5 + Math.random() * 5) + "s";
       petal.style.animationDelay = Math.random() * 5 + "s";
       document.body.appendChild(petal);
     }

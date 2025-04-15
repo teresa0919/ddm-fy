@@ -29,19 +29,13 @@ function checkIn() {
 
   const now = new Date();
   const dateStr = now.toISOString().split("T")[0];
+
   db.ref('checkins/' + dateStr).push({
     nickname: nickname,
     sutra: sutra,
     count: count,
     timestamp: now.toISOString()
   }).then(() => {
-    const msg = document.getElementById("successMessage");
-    const quotes = [
-      "讚嘆您，持經功德無量！",
-      "一念佛號，一道光明！",
-      "願您日日法喜，處處吉祥～",
-      "功不唐捐，願願皆成！"
-    ];
-    msg.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    window.location.href = "success.html";
   });
 }
