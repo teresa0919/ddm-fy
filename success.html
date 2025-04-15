@@ -3,13 +3,13 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>功德圓滿</title>
+  <title>打卡成功</title>
   <style>
     body {
-      background: linear-gradient(#fff9f0, #ffe5ec);
+      background: linear-gradient(to bottom, #fffaf0, #ffeef2);
       font-family: "Noto Sans TC", sans-serif;
       text-align: center;
-      padding: 4em 2em;
+      padding: 3em 2em;
       position: relative;
       overflow: hidden;
     }
@@ -19,22 +19,40 @@
       margin-bottom: 1rem;
     }
     .blessing {
-      font-size: 1.8rem;
-      color: #6d4c41;
-      font-weight: 600;
-      margin-top: 1rem;
+      font-size: 2rem;
+      color: #5d4037;
+      font-weight: bold;
+      margin: 1.5rem 0;
+    }
+    .btn-group {
+      margin-top: 2.5rem;
+    }
+    .btn {
+      display: inline-block;
+      background: #f8bbd0;
+      color: #4e342e;
+      padding: 12px 24px;
+      margin: 0 10px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #f48fb1;
     }
     .petal {
       position: absolute;
       width: 30px;
       height: 30px;
-      background: url('https://i.imgur.com/sfWJ1Cq.png') no-repeat center;
-      background-size: contain;
+      background-image: url('https://i.imgur.com/2rkFh6g.png');
+      background-size: cover;
       animation: fall 10s linear infinite;
+      opacity: 0.8;
       pointer-events: none;
     }
     @keyframes fall {
-      0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+      0% { transform: translateY(-60px) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
   </style>
@@ -43,6 +61,11 @@
   <h1>功德圓滿！</h1>
   <div class="blessing" id="blessing"></div>
 
+  <div class="btn-group">
+    <a href="index.html" class="btn">返回主頁</a>
+    <a href="leaderboard.html" class="btn">排行榜</a>
+  </div>
+
   <audio id="blessingAudio" autoplay>
     <source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_9b50bc3f4f.mp3?filename=buddhist-meditation-ambient-122327.mp3" type="audio/mpeg">
     您的瀏覽器不支援音訊播放。
@@ -50,22 +73,21 @@
 
   <script>
     const blessings = [
-      "願你福慧圓滿，吉祥自在～",
-      "誦經一念，善緣千重，法喜充滿！",
-      "今日打卡成功，功德無量！",
-      "諸佛加持，智慧現前～",
-      "願此善行回向十方眾生！"
+      "願你今日福慧雙增，法喜充滿！",
+      "諸佛護佑，智慧現前，吉祥如意～",
+      "善願成就，回向十方，一切功德圓滿！",
+      "今日誦經，功德無量，佛光遍照～",
+      "願你日日清淨、念念安心！"
     ];
-    const blessingText = blessings[Math.floor(Math.random() * blessings.length)];
-    document.getElementById("blessing").textContent = blessingText;
+    document.getElementById("blessing").textContent = blessings[Math.floor(Math.random() * blessings.length)];
 
-    // 花瓣動畫生成
-    for (let i = 0; i < 25; i++) {
+    // 產生花瓣動畫
+    for (let i = 0; i < 30; i++) {
       const petal = document.createElement("div");
       petal.className = "petal";
       petal.style.left = Math.random() * 100 + "vw";
       petal.style.animationDelay = Math.random() * 5 + "s";
-      petal.style.animationDuration = 6 + Math.random() * 5 + "s";
+      petal.style.animationDuration = 6 + Math.random() * 6 + "s";
       document.body.appendChild(petal);
     }
   </script>
