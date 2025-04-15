@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -5,10 +6,70 @@
   <title>打卡成功</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .blessing-box {
+      text-align: center;
+      margin-top: 4rem;
+    }
+    .blessing-box h1 {
+      font-size: 2.5rem;
+      color: #a38bd4;
+      margin-bottom: 1rem;
+    }
+    .blessing-box p {
+      font-size: 1.5rem;
+      color: #4e342e;
+    }
+    .buttons {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .buttons a {
+      margin: 0 1rem;
+      color: white;
+      background: #f3b46f;
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .buttons a:hover {
+      background: #e69f4d;
+    }
+  </style>
 </head>
 <body>
-  <h1>功德圓滿！</h1>
-  <p>願你日日清淨，念念安心！</p>
-  <a href="index.html">回首頁</a> | <a href="leaderboard.html">排行榜</a>
+  <header>
+    <nav>
+      <a href="index.html">首頁</a>
+      <a href="calendar.html">打卡月曆</a>
+      <a href="chart.html">統計圖表</a>
+    </nav>
+  </header>
+
+  <main class="blessing-box">
+    <h1 id="blessing-title">功德圓滿！</h1>
+    <p id="blessing-text">願你日日清淨，念念安心！</p>
+
+    <div class="buttons">
+      <a href="index.html">返回首頁</a>
+      <a href="leaderboard.html">排行榜</a>
+    </div>
+  </main>
+
+  <footer>願以此功德 回向眾生法喜充滿</footer>
+
+  <script>
+    const blessings = [
+      ["功德圓滿！", "願你日日清淨，念念安心！"],
+      ["福慧雙增！", "願你廣種福田，智慧光明！"],
+      ["法喜充滿！", "願你身心自在，善願成就！"],
+      ["願願圓滿！", "願你所有發願皆蒙加持！"],
+      ["善緣具足！", "願你行走之處皆是祝福！"]
+    ];
+    const pick = blessings[Math.floor(Math.random() * blessings.length)];
+    document.getElementById("blessing-title").textContent = pick[0];
+    document.getElementById("blessing-text").textContent = pick[1];
+  </script>
 </body>
 </html>
