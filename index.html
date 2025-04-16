@@ -1,1 +1,90 @@
-<!-- 修復後的打卡首頁程式碼放這裡 -->
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>打卡系統首頁</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f6f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #ffd54f;
+      border: none;
+      cursor: pointer;
+    }
+    .links {
+      margin-top: 1rem;
+    }
+    .links a {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>每日佛經打卡</h1>
+    <input type="text" id="nickname" placeholder="輸入你的暱稱" />
+    <input type="text" id="sutra" placeholder="誦持的經文名稱" />
+    <button onclick="checkIn()">立即打卡</button>
+
+    <div class="links">
+      <a href="leaderboard.html">排行榜</a>
+      <a href="calendar.html">打卡月曆</a>
+      <a href="chart.html">統計圖表</a>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script>
+    function checkIn() {
+      const nickname = document.getElementById('nickname').value.trim();
+      const sutra = document.getElementById('sutra').value.trim();
+
+      if (!nickname || !sutra) {
+        alert('請填寫暱稱和經文名稱');
+        return;
+      }
+
+      saveCheckIn(nickname, sutra).then(() => {
+        window.location.href = 'success.html';
+      }).catch((error) => {
+        alert('打卡失敗：' + error);
+      });
+    }
+  </script>
+</body>
+</html>
