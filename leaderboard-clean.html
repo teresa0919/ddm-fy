@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>誦經排行榜</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f6f2;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 500px;
+      margin: auto;
+    }
+    li {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.1rem;
+    }
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>誦經排行榜</h1>
+  <ul id="sutraStatsList">
+    <!-- 佛經統計列表將由 JS 產生 -->
+  </ul>
+  <a class="back" href="index.html">回首頁</a>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="db.js"></script>
+  <script>
+    async function renderSutraStats() {
+      const list = document.getElementById('sutraStatsList');
+      const stats = await getSutraStats();
+      const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+
+      for (const [sutra, count] of sorted) {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${sutra}</span><span>${count}</span>`;
+        list.appendChild(li);
+      }
+    }
+
+    renderSutraStats();
+  </script>
+</body>
+</html>
