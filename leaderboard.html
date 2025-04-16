@@ -6,24 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>誦經排行榜</title>
   <style>
-    body { font-family: sans-serif; background-color: #f9f6f2; margin: 0; padding: 2rem; }
-    h1 { text-align: center; margin-bottom: 1.5rem; }
-    h2 { margin-top: 2rem; text-align: center; }
-    ul { list-style: none; padding: 0; max-width: 500px; margin: auto; }
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background-color: #f9f6f2;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: auto;
+    }
     li {
       background: white;
       border-radius: 0.5rem;
       padding: 1rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      margin-bottom: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 1.1rem;
+    }
+    li span:first-child {
+      font-weight: 500;
+      text-align: left;
+      flex: 1;
+    }
+    li span:last-child {
+      font-weight: bold;
+      color: #333;
+      text-align: right;
+      min-width: 4rem;
     }
     .back {
       display: block;
       text-align: center;
-      margin-top: 2rem;
+      margin: 3rem 0 1rem;
       font-size: 1rem;
       color: #007bff;
       text-decoration: none;
@@ -36,7 +62,7 @@
   <h2>各部佛經排行</h2>
   <ul id="sutraList"></ul>
 
-  <h2>誦經者排行（已去識別）</h2>
+  <h2>誦經者排行（名稱已遮蔽）</h2>
   <ul id="nicknameList"></ul>
 
   <a class="back" href="index.html">回首頁</a>
@@ -64,11 +90,9 @@
           for (const sutra in data[date][nickname]) {
             const count = data[date][nickname][sutra];
 
-            // 累加佛經
             if (!sutraTotals[sutra]) sutraTotals[sutra] = 0;
             sutraTotals[sutra] += count;
 
-            // 累加人名（原始）
             if (!userTotals[nickname]) userTotals[nickname] = 0;
             userTotals[nickname] += count;
           }
@@ -76,8 +100,7 @@
       }
 
       const sutraList = document.getElementById("sutraList");
-      Object.entries(sutraTotals)
-        .sort((a, b) => b[1] - a[1])
+      Object.entries(sutraTotals).sort((a, b) => b[1] - a[1])
         .forEach(([sutra, count]) => {
           const li = document.createElement("li");
           li.innerHTML = `<span>${sutra}</span><span>${count}</span>`;
@@ -85,8 +108,7 @@
         });
 
       const nicknameList = document.getElementById("nicknameList");
-      Object.entries(userTotals)
-        .sort((a, b) => b[1] - a[1])
+      Object.entries(userTotals).sort((a, b) => b[1] - a[1])
         .forEach(([nickname, count]) => {
           const li = document.createElement("li");
           li.innerHTML = `<span>${maskName(nickname)}</span><span>${count}</span>`;
