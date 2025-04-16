@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>排行榜</title>
+  <title>誦經排行榜</title>
   <style>
     body {
       font-family: sans-serif;
@@ -44,8 +44,8 @@
 </head>
 <body>
   <h1>誦經排行榜</h1>
-  <ul id="leaderboardList">
-    <!-- 排行榜項目將由 JS 產生 -->
+  <ul id="sutraStatsList">
+    <!-- 佛經統計列表將由 JS 產生 -->
   </ul>
   <a class="back" href="index.html">回首頁</a>
 
@@ -53,8 +53,8 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="db.js"></script>
   <script>
-    async function renderLeaderboard() {
-      const list = document.getElementById('leaderboardList');
+    async function renderSutraStats() {
+      const list = document.getElementById('sutraStatsList');
       const stats = await getSutraStats();
       const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
 
@@ -65,7 +65,7 @@
       }
     }
 
-    renderLeaderboard();
+    renderSutraStats();
   </script>
 </body>
 </html>
