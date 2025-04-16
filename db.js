@@ -1,13 +1,14 @@
 
-// Firebase Realtime Database 版本
+// Firebase Realtime Database 版本（使用你的實際設定）
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "https://ddm-fy-default-rtdb.firebaseio.com",
+  apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+  authDomain: "ddm-fy.firebaseapp.com",
+  databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ddm-fy",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  storageBucket: "ddm-fy.firebasestorage.app",
+  messagingSenderId: "439647437849",
+  appId: "1:439647437849:web:b195f3e4d316d417969688",
+  measurementId: "G-2S6W1JH4EN"
 };
 
 firebase.initializeApp(firebaseConfig);
