@@ -6,22 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>誦經排行榜</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f9f6f2;
-      margin: 0;
-      padding: 2rem;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      max-width: 500px;
-      margin: auto;
-    }
+    body { font-family: sans-serif; background-color: #f9f6f2; margin: 0; padding: 2rem; }
+    h1 { text-align: center; margin-bottom: 1.5rem; }
+    h2 { margin-top: 2rem; text-align: center; }
+    ul { list-style: none; padding: 0; max-width: 500px; margin: auto; }
     li {
       background: white;
       border-radius: 0.5rem;
@@ -44,28 +32,69 @@
 </head>
 <body>
   <h1>誦經排行榜</h1>
-  <ul id="sutraStatsList">
-    <!-- 佛經統計列表將由 JS 產生 -->
-  </ul>
+
+  <h2>各部佛經排行</h2>
+  <ul id="sutraList"></ul>
+
+  <h2>誦經者排行（已去識別）</h2>
+  <ul id="nicknameList"></ul>
+
   <a class="back" href="index.html">回首頁</a>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="db.js"></script>
   <script>
-    async function renderSutraStats() {
-      const list = document.getElementById('sutraStatsList');
-      const stats = await getSutraStats();
-      const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
-
-      for (const [sutra, count] of sorted) {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${sutra}</span><span>${count}</span>`;
-        list.appendChild(li);
-      }
+    function maskName(name) {
+      if (name.length <= 1) return name;
+      if (name.length === 2) return name[0] + "○";
+      const mid = Math.floor(name.length / 2);
+      return name.substring(0, mid) + "○" + name.substring(mid + 1);
     }
 
-    renderSutraStats();
+    async function renderLeaderboard() {
+      const snapshot = await firebase.database().ref("checkins").get();
+      const data = snapshot.val() || {};
+
+      const sutraTotals = {};
+      const userTotals = {};
+
+      for (const date in data) {
+        for (const nickname in data[date]) {
+          for (const sutra in data[date][nickname]) {
+            const count = data[date][nickname][sutra];
+
+            // 累加佛經
+            if (!sutraTotals[sutra]) sutraTotals[sutra] = 0;
+            sutraTotals[sutra] += count;
+
+            // 累加人名（原始）
+            if (!userTotals[nickname]) userTotals[nickname] = 0;
+            userTotals[nickname] += count;
+          }
+        }
+      }
+
+      const sutraList = document.getElementById("sutraList");
+      Object.entries(sutraTotals)
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([sutra, count]) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span>${sutra}</span><span>${count}</span>`;
+          sutraList.appendChild(li);
+        });
+
+      const nicknameList = document.getElementById("nicknameList");
+      Object.entries(userTotals)
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([nickname, count]) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span>${maskName(nickname)}</span><span>${count}</span>`;
+          nicknameList.appendChild(li);
+        });
+    }
+
+    renderLeaderboard();
   </script>
 </body>
 </html>
