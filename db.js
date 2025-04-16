@@ -1,65 +1,68 @@
 
-// 初始化 Firebase（請自行替換為你的 Firebase 設定）
+// Firebase Realtime Database 版本
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  databaseURL: "https://ddm-fy-default-rtdb.firebaseio.com",
+  projectId: "ddm-fy",
   storageBucket: "YOUR_BUCKET",
   messagingSenderId: "YOUR_SENDER_ID",
   appId: "YOUR_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const database = firebase.database();
 
 // 儲存打卡資料：暱稱 + 經文 + 次數
 async function saveCheckIn(nickname, sutra, count = 1) {
-  const docRef = db.collection('checkins').doc(`${nickname}_${sutra}`);
-  const doc = await docRef.get();
+  const dateStr = new Date().toISOString().split('T')[0]; // 例如 2025-04-15
+  const path = `checkins/${dateStr}/${nickname}/${sutra}`;
 
-  if (doc.exists) {
-    const prev = doc.data().count || 0;
-    await docRef.update({
-      count: prev + count,
-      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  } else {
-    await docRef.set({
-      nickname,
-      sutra,
-      count,
-      created: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  }
+  const ref = database.ref(path);
+  const snapshot = await ref.get();
+  const prev = snapshot.exists() ? snapshot.val() : 0;
+
+  await ref.set(prev + count);
 }
 
-// 查詢誦經統計
+// 查詢誦經統計（累加所有經文的次數）
 async function getSutraStats() {
-  const snapshot = await db.collection('checkins').get();
+  const ref = database.ref('checkins');
+  const snapshot = await ref.get();
   const stats = {};
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (stats[data.sutra]) {
-      stats[data.sutra] += data.count;
-    } else {
-      stats[data.sutra] = data.count;
+
+  if (!snapshot.exists()) return stats;
+
+  const data = snapshot.val();
+  for (const date in data) {
+    for (const nickname in data[date]) {
+      for (const sutra in data[date][nickname]) {
+        if (!stats[sutra]) stats[sutra] = 0;
+        stats[sutra] += data[date][nickname][sutra];
+      }
     }
-  });
+  }
+
   return stats;
 }
 
 // 查詢某人某月的打卡日
 async function getCheckInDays(nickname, year, month) {
-  const snapshot = await db.collection('checkins').get();
+  const ref = database.ref('checkins');
+  const snapshot = await ref.get();
   const days = [];
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.nickname === nickname && data.created) {
-      const date = data.created.toDate();
-      if (date.getFullYear() === year && date.getMonth() === month) {
-        days.push(date.toISOString().split('T')[0]);
+
+  if (!snapshot.exists()) return days;
+
+  const data = snapshot.val();
+  for (const dateStr in data) {
+    const date = new Date(dateStr);
+    if (date.getFullYear() === year && date.getMonth() === month) {
+      if (data[dateStr][nickname]) {
+        days.push(dateStr);
       }
     }
-  });
+  }
+
   return days;
 }
