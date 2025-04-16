@@ -2,109 +2,81 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>誦經排行榜</title>
+  <meta charset="UTF-8">
+  <title>排行榜</title>
   <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      background-color: #f9f6f2;
-      margin: 0;
-      padding: 2rem;
-      color: #333;
-    }
-    h1, h2 {
-      text-align: center;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      max-width: 600px;
-      margin: auto;
-    }
-    li {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      margin-bottom: 0.75rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.1rem;
-    }
-    li span:first-child {
-      font-weight: 500;
-      text-align: left;
-      flex: 1;
-    }
-    li span:last-child {
-      font-weight: bold;
-      color: #333;
-      text-align: right;
-      min-width: 4rem;
-    }
-    .back {
-      display: block;
-      text-align: center;
-      margin: 3rem 0 1rem;
-      font-size: 1rem;
-      color: #007bff;
-      text-decoration: none;
-    }
+    body { font-family: sans-serif; padding: 20px; background: #fefefe; }
+    h2 { margin-top: 30px; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f0f0f0; margin: 5px 0; padding: 10px; border-radius: 8px; }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
   <h1>誦經排行榜</h1>
-  <h2>各部佛經排行</h2>
-  <ul id="sutraList"></ul>
-  <h2>誦經者排行</h2>
-  <ul id="nicknameList"></ul>
-  <a class="back" href="index.html">回首頁</a>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="db.js"></script>
+
+  <h2>佛經總類排行</h2>
+  <ul id="sutraRanking"></ul>
+
+  <h2>個人誦持排行</h2>
+  <ul id="userRanking"></ul>
+
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.appspot.com",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const sutraCount = {};
+    const userCount = {};
+
     function maskName(name) {
-      if (name.length <= 1) return name;
-      if (name.length === 2) return name[0] + "○";
-      const mid = Math.floor(name.length / 2);
-      return name.substring(0, mid) + "○" + name.substring(mid + 1);
+      if (!name || name.length < 2) return name;
+      const parts = name.split("");
+      parts[1] = "○";
+      return parts.join("");
     }
-    async function renderLeaderboard() {
-      const snapshot = await firebase.database().ref("checkins").get();
-      const data = snapshot.val() || {};
-      const sutraTotals = {};
-      const userTotals = {};
-      for (const date in data) {
-        for (const nickname in data[date]) {
-          for (const sutra in data[date][nickname]) {
-            const count = data[date][nickname][sutra];
-            if (!sutraTotals[sutra]) sutraTotals[sutra] = 0;
-            sutraTotals[sutra] += count;
-            if (!userTotals[nickname]) userTotals[nickname] = 0;
-            userTotals[nickname] += count;
-          }
-        }
-      }
-      const sutraList = document.getElementById("sutraList");
-      Object.entries(sutraTotals).sort((a, b) => b[1] - a[1])
-        .forEach(([sutra, count]) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<span>${sutra}</span><span>${count}</span>`;
-          sutraList.appendChild(li);
+
+    db.ref("checkins").once("value").then(snapshot => {
+      snapshot.forEach(dateSnap => {
+        dateSnap.forEach(userSnap => {
+          const user = maskName(userSnap.key);
+          userSnap.forEach(sutraSnap => {
+            const sutra = sutraSnap.key;
+            const count = parseInt(sutraSnap.val()) || 1;
+
+            sutraCount[sutra] = (sutraCount[sutra] || 0) + count;
+            userCount[user] = (userCount[user] || 0) + count;
+          });
         });
-      const nicknameList = document.getElementById("nicknameList");
-      Object.entries(userTotals).sort((a, b) => b[1] - a[1])
-        .forEach(([nickname, count]) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<span>${maskName(nickname)}</span><span>${count}</span>`;
-          nicknameList.appendChild(li);
-        });
-    }
-    renderLeaderboard();
+      });
+
+      const sortedSutra = Object.entries(sutraCount).sort((a,b) => b[1] - a[1]);
+      const sortedUser = Object.entries(userCount).sort((a,b) => b[1] - a[1]);
+
+      const sutraUl = document.getElementById("sutraRanking");
+      sortedSutra.forEach(([sutra, count], i) => {
+        const li = document.createElement("li");
+        li.textContent = `${i+1}. ${sutra}：${count} 次`;
+        sutraUl.appendChild(li);
+      });
+
+      const userUl = document.getElementById("userRanking");
+      sortedUser.forEach(([user, count], i) => {
+        const li = document.createElement("li");
+        li.textContent = `${i+1}. ${user}：${count} 次`;
+        userUl.appendChild(li);
+      });
+    });
   </script>
 </body>
 </html>
