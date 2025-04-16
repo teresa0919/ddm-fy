@@ -61,7 +61,7 @@
   <div class="container">
     <h1>每日佛經打卡</h1>
     <input type="text" id="nickname" placeholder="輸入你的暱稱" />
-    
+
     <select id="sutraSelect" onchange="toggleCustomInput(this)">
       <option value="">請選擇誦持的經文</option>
       <option value="心經">心經</option>
@@ -87,6 +87,8 @@
       <option value="其他">其他（可自行填寫）</option>
     </select>
     <input type="text" id="customSutra" placeholder="請輸入其他經文名稱" />
+
+    <input type="number" id="count" placeholder="誦持次數（預設為1）" min="1" />
 
     <button onclick="checkIn()">立即打卡</button>
 
@@ -114,13 +116,14 @@
       const selected = document.getElementById('sutraSelect').value;
       const custom = document.getElementById('customSutra').value.trim();
       const sutra = selected === '其他' ? custom : selected;
+      const count = parseInt(document.getElementById('count').value.trim()) || 1;
 
       if (!nickname || !sutra) {
         alert('請填寫暱稱和經文名稱');
         return;
       }
 
-      saveCheckIn(nickname, sutra).then(() => {
+      saveCheckIn(nickname, sutra, count).then(() => {
         window.location.href = 'success.html';
       }).catch((error) => {
         alert('打卡失敗：' + error);
