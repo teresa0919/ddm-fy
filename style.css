@@ -1,86 +1,66 @@
 
 body {
-  font-family: 'Noto Sans TC', sans-serif;
-  background-color: #fffaf0;
-  color: #333;
+  font-family: "Noto Sans TC", sans-serif;
+  background-color: #f9f6f2;
   margin: 0;
-  padding: 0;
-}
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
-  padding: 0.5rem 1rem;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
-
-nav a {
-  text-decoration: none;
-  color: #734c9e;
-  font-weight: bold;
-  padding-bottom: 0.2rem;
-  border-bottom: 2px solid transparent;
-  transition: 0.3s;
-}
-
-nav a:hover {
-  border-bottom: 2px solid #f9c2ce;
-}
-
-main {
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: auto;
-}
-
-.card {
-  background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
   padding: 2rem;
-  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  color: #333;
 }
-
-h1, h2 {
-  color: #a38bd4;
-}
-
-form input, form select, form button {
-  display: block;
+.container, .calendar, .bar-container, .content-wrapper {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  padding: 2rem;
+  max-width: 420px;
   width: 100%;
-  margin: 0.75rem 0;
+  margin-bottom: 2rem;
+}
+h1, h2 {
+  text-align: center;
+  color: #5c4033;
+  margin-top: 0;
+}
+input, select, button {
+  width: 100%;
+  margin-top: 1rem;
   padding: 0.75rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid #ccc;
   font-size: 1rem;
   box-sizing: border-box;
 }
-
-form button {
-  background-color: #f3b46f;
-  color: white;
+button {
+  background-color: #ffd54f;
   border: none;
-  transition: 0.2s;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
 }
-
-form button:hover {
-  background-color: #e69f4d;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+button:hover {
+  background-color: #ffca28;
 }
-
-footer {
+.links, nav, footer {
   text-align: center;
-  padding: 1.5rem 1rem;
+  margin-top: 1rem;
+}
+.links a, nav a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+canvas {
+  max-width: 100%;
+}
+.bar-fill {
+  background-color: #a38bd4;
+}
+footer {
+  margin-top: auto;
   font-size: 0.9rem;
-  color: #888;
-  margin-top: 3rem;
+  color: #777;
 }
