@@ -2,61 +2,135 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <title>每月打卡紀錄表</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>打卡月曆（互動版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-top: 2rem; }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
     .calendar div {
-      background-color: #f9eff5;
+      background-color: #f0f0f0;
       border-radius: 8px;
-      padding: 1rem 0.5rem;
+      padding: 0.75rem 0.5rem;
       text-align: center;
       font-size: 0.9rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      cursor: default;
     }
-    .calendar .header { font-weight: bold; background: transparent; box-shadow: none; color: #734c9e; }
-    .calendar .checked { background-color: #f8bbd0; color: #fff; font-weight: bold; }
+    .calendar .header {
+      font-weight: bold;
+      background: none;
+      box-shadow: none;
+      color: #734c9e;
+    }
+    .calendar .checked {
+      background-color: #d1c4e9;
+      font-weight: bold;
+      color: #4a148c;
+      cursor: pointer;
+    }
+    .record-list {
+      margin-top: 2rem;
+      text-align: left;
+    }
+    .record-item {
+      padding: 0.5rem;
+      border-bottom: 1px dashed #ccc;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>每月打卡紀錄</h1>
+    <h1>打卡月曆（Firebase 資料）</h1>
     <div class="calendar" id="calendar"></div>
+    <div class="record-list" id="recordList"></div>
     <div class="links">
       <a href="index.html">回首頁</a>
     </div>
   </div>
-  <script>
-    const calendar = document.getElementById("calendar");
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.firebasestorage.app",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const calendarEl = document.getElementById("calendar");
+    const recordList = document.getElementById("recordList");
     const today = new Date();
     const year = today.getFullYear();
-    const month = today.getMonth();
+    const month = today.getMonth(); // 0-indexed
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const weekdayNames = ['日','一','二','三','四','五','六'];
-
-    weekdayNames.forEach(d => {
-      const div = document.createElement('div');
-      div.textContent = d;
-      div.className = 'header';
-      calendar.appendChild(div);
-    });
-
     const firstDay = new Date(year, month, 1).getDay();
-    for (let i = 0; i < firstDay; i++) {
-      calendar.appendChild(document.createElement('div'));
+    const dateMap = {};
+
+    async function loadData() {
+      const snapshot = await get(child(ref(db), "checkins"));
+      const data = snapshot.exists() ? snapshot.val() : {};
+      for (const date in data) {
+        if (date.startsWith(`${year}-${(month+1).toString().padStart(2, '0')}`)) {
+          dateMap[date] = Object.values(data[date]);
+        }
+      }
+      renderCalendar();
     }
 
-    const mockChecked = [1, 2, 3, 5, 7, 11, 13, 18, 21];
-    for (let day = 1; day <= daysInMonth; day++) {
-      const cell = document.createElement('div');
-      cell.textContent = day;
-      if (mockChecked.includes(day)) {
-        cell.classList.add('checked');
+    function renderCalendar() {
+      const weekdays = ['日','一','二','三','四','五','六'];
+      weekdays.forEach(day => {
+        const header = document.createElement("div");
+        header.textContent = day;
+        header.className = "header";
+        calendarEl.appendChild(header);
+      });
+
+      for (let i = 0; i < firstDay; i++) {
+        calendarEl.appendChild(document.createElement("div"));
       }
-      calendar.appendChild(cell);
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cell = document.createElement("div");
+        const dateStr = `${year}-${(month+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+        cell.textContent = d;
+
+        if (dateMap[dateStr]) {
+          cell.classList.add("checked");
+          cell.addEventListener("click", () => showRecords(dateStr));
+        }
+
+        calendarEl.appendChild(cell);
+      }
     }
+
+    function showRecords(dateStr) {
+      const records = dateMap[dateStr];
+      recordList.innerHTML = `<h3>${dateStr} 打卡紀錄</h3>` +
+        records.map(item =>
+          `<div class="record-item">
+            暱稱：${item.nickname || "匿名"}<br/>
+            經文：${item.sutra || "未知"}<br/>
+            次數：${item.count || 1}
+          </div>`
+        ).join('');
+    }
+
+    loadData();
   </script>
 </body>
 </html>
