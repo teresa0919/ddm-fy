@@ -3,17 +3,51 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>統計圖表（Firebase 動態版）</title>
+  <title>統計圖表（優化版）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     canvas { margin-top: 2rem; max-width: 100%; }
-    .bar-container { margin-top: 3rem; max-width: 420px; margin-inline: auto; text-align: left; }
-    .bar-item { margin: 0.5rem 0; }
-    .bar-label { display: inline-block; width: 140px; text-align: right; margin-right: 10px; }
-    .bar-fill { display: inline-block; height: 16px; border-radius: 8px; background-color: #a38bd4; vertical-align: middle; }
-    .bar-count { margin-left: 10px; display: inline-block; min-width: 24px; }
+    .bar-container {
+      margin-top: 3rem;
+      max-width: 480px;
+      margin-inline: auto;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    .bar-item {
+      display: flex;
+      align-items: center;
+      margin: 0.5rem 0;
+    }
+    .bar-label {
+      flex: 0 0 120px;
+      text-align: right;
+      margin-right: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .bar-track {
+      flex: 1;
+      background: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 16px;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      background-color: #a38bd4;
+    }
+    .bar-count {
+      margin-left: 10px;
+      flex-shrink: 0;
+      min-width: 32px;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
@@ -75,10 +109,8 @@
           labels,
           datasets: [{
             data: counts,
-            backgroundColor: [
-              "#f9c74f", "#f9844a", "#90be6d", "#577590", "#f8961e",
-              "#43aa8b", "#f3722c", "#b5838d", "#6a4c93", "#ffb4a2"
-            ]
+            backgroundColor: labels.map((_, i) =>
+              `hsl(${(i * 47) % 360}, 70%, 65%)`)
           }]
         },
         options: {
@@ -88,15 +120,18 @@
         }
       });
 
-      // 長條圖
+      // 條形圖
       const bar = document.getElementById("barContainer");
       bar.innerHTML = labels.map((label, i) => {
-        const width = Math.round((counts[i] / max) * 100);
+        const percent = Math.round((counts[i] / max) * 100);
+        const color = `hsl(${(i * 47) % 360}, 70%, 65%)`;
         return `
           <div class="bar-item">
-            <span class="bar-label">${label}</span>
-            <span class="bar-fill" style="width:${width}%"></span>
-            <span class="bar-count">${counts[i]}</span>
+            <div class="bar-label" title="${label}">${label}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${percent}%; background-color:${color};"></div>
+            </div>
+            <div class="bar-count">${counts[i]}</div>
           </div>
         `;
       }).join("");
