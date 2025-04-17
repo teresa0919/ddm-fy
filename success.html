@@ -46,6 +46,49 @@
       autoplay: true,
       path: 'https://lottie.host/3c8aa894-6c84-48fc-ae52-8bdbbf5cc4f7/jKbGbdM2IB.json'
     });
+
+function submitWish() {
+  const wish = document.getElementById("wish").value.trim();
+  const isPublic = document.getElementById("isPublic").checked;
+  const msg = document.getElementById("wishMsg");
+
+  if (!wish) {
+    msg.textContent = "請先輸入願望內容唷～";
+    msg.style.color = "#d32f2f";
+    return;
+  }
+
+  // 模擬送出（未連接 Firebase）
+  const nickname = localStorage.getItem("nickname") || "匿名";
+  const timestamp = Date.now();
+  const newWish = {
+    nickname,
+    wish,
+    isPublic,
+    timestamp
+  };
+  import("https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js").then(({ getDatabase, ref, push }) => {
+    const db = getDatabase();
+    push(ref(db, "wishes"), newWish)
+      .then(() => {
+        msg.textContent = "已送出！願望將與功德一同迴向～";
+        msg.style.color = "#388e3c";
+        document.getElementById("wish").value = "";
+        document.getElementById("isPublic").checked = false;
+      })
+      .catch((err) => {
+        msg.textContent = "送出失敗：" + err.message;
+        msg.style.color = "#d32f2f";
+      });
+  });
+  msg.textContent = "已送出！願望將與功德一同迴向～";
+  msg.style.color = "#388e3c";
+
+  // 清空
+  document.getElementById("wish").value = "";
+  document.getElementById("isPublic").checked = false;
+}
+
 </script>
 <div class="container success-box">
   <div id="animation" style="width: 180px; margin: 1rem auto;"></div>
@@ -55,10 +98,40 @@
       <a href="index.html">回首頁</a>
       <a href="chart.html">統計圖表</a>
       <a href="leaderboard.html">排行榜</a>
+    
+    <div class="wish-box" style="margin-top: 2rem; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+      <label for="wish" style="font-weight: bold;">留下你的願望：</label><br/>
+      <textarea id="wish" rows="3" placeholder="願我與家人平安健康……" style="width: 100%; margin-top: 0.5rem; border-radius: 1rem; padding: 0.75rem;"></textarea>
+      <div style="margin-top: 0.75rem;">
+        <input type="checkbox" id="isPublic" />
+        <label for="isPublic">願望可公開顯示在祈願牆（匿名）</label>
+      </div>
+      <button onclick="submitWish()" style="margin-top: 1rem; padding: 0.5rem 1rem; border-radius: 1rem; background: #4caf50; color: white; border: none; font-weight: bold;">送出願望</button>
+      <div id="wishMsg" style="margin-top: 0.5rem; font-style: italic; color: #388e3c;"></div>
     </div>
+
   </div>
 
-  <script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+// Firebase 設定
+const firebaseConfig = {
+  apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+  authDomain: "ddm-fy.firebaseapp.com",
+  databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ddm-fy",
+  storageBucket: "ddm-fy.appspot.com",
+  messagingSenderId: "439647437849",
+  appId: "1:439647437849:web:b195f3e4d316d417969688"
+};
+
+// 初始化
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+</script>
+<script>
     const quotes = [
       "一日不作，一日不食。",
       "佛法在世間，不離世間覺。",
@@ -82,6 +155,49 @@
       autoplay: true,
       path: 'https://lottie.host/3c8aa894-6c84-48fc-ae52-8bdbbf5cc4f7/jKbGbdM2IB.json'
     });
+
+function submitWish() {
+  const wish = document.getElementById("wish").value.trim();
+  const isPublic = document.getElementById("isPublic").checked;
+  const msg = document.getElementById("wishMsg");
+
+  if (!wish) {
+    msg.textContent = "請先輸入願望內容唷～";
+    msg.style.color = "#d32f2f";
+    return;
+  }
+
+  // 模擬送出（未連接 Firebase）
+  const nickname = localStorage.getItem("nickname") || "匿名";
+  const timestamp = Date.now();
+  const newWish = {
+    nickname,
+    wish,
+    isPublic,
+    timestamp
+  };
+  import("https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js").then(({ getDatabase, ref, push }) => {
+    const db = getDatabase();
+    push(ref(db, "wishes"), newWish)
+      .then(() => {
+        msg.textContent = "已送出！願望將與功德一同迴向～";
+        msg.style.color = "#388e3c";
+        document.getElementById("wish").value = "";
+        document.getElementById("isPublic").checked = false;
+      })
+      .catch((err) => {
+        msg.textContent = "送出失敗：" + err.message;
+        msg.style.color = "#d32f2f";
+      });
+  });
+  msg.textContent = "已送出！願望將與功德一同迴向～";
+  msg.style.color = "#388e3c";
+
+  // 清空
+  document.getElementById("wish").value = "";
+  document.getElementById("isPublic").checked = false;
+}
+
 </script>
 </body>
 </html>

@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>祈願牆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.appspot.com",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const wishesRef = ref(db, "wishes");
+
+    onValue(wishesRef, (snapshot) => {
+      const list = document.getElementById("wishList");
+      list.innerHTML = "";
+      const wishes = [];
+      snapshot.forEach(child => {
+        const data = child.val();
+        if (data.isPublic) {
+          wishes.push(data);
+        }
+      });
+
+      wishes.sort((a, b) => b.timestamp - a.timestamp);
+
+      wishes.forEach(wish => {
+        const card = document.createElement("div");
+        card.className = "wish-card";
+        const date = new Date(wish.timestamp).toLocaleDateString();
+        card.innerHTML = `
+          <p class="wish-text">「${wish.wish}」</p>
+          <p class="wish-date">${date}</p>
+        `;
+        list.appendChild(card);
+      });
+
+      if (wishes.length === 0) {
+        list.innerHTML = "<p style='text-align:center;'>目前尚無公開願望，快來許願吧！</p>";
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #fffaf5;
+      margin: 0;
+      padding: 2rem;
+      color: #4e342e;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    #wishList {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    .wish-card {
+      background-color: #f3e5f5;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .wish-text {
+      font-size: 1.2rem;
+      font-style: italic;
+      margin: 0;
+    }
+    .wish-date {
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      color: #6a1b9a;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <h1>祈願牆</h1>
+  <div id="wishList">載入中...</div>
+</body>
+</html>
