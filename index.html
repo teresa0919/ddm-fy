@@ -1,55 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>每日打卡</title>
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      background: #f9f6f2;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(0,0,0,0.05);
-      max-width: 420px;
-      width: 100%;
-      text-align: center;
-    }
-    input, select, button {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #ffd54f;
-      border: none;
-      cursor: pointer;
-    }
-    .links {
-      margin-top: 1.5rem;
-    }
-    .links a {
-      color: #007bff;
-      text-decoration: none;
-      margin: 0 1rem;
-    }
-    #customSutra {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -79,35 +34,19 @@
       <option value="南無藥師琉璃光如來佛號">南無藥師琉璃光如來佛號</option>
       <option value="其他">其他（可自行輸入）</option>
     </select>
-    <input type="text" id="customSutra" placeholder="請輸入其他經文名稱" />
+    <input type="text" id="customSutra" placeholder="請輸入其他經文名稱" style="display:none;" />
     <input type="number" id="count" placeholder="誦持次數（預設為1）" min="1" />
-    <button onclick="checkIn()">立即打卡</button>
+    <button onclick="alert('打卡成功！資料暫未寫入後端')">立即打卡</button>
     <div class="links">
+      <a href="calendar.html">打卡月曆</a> |
+      <a href="chart.html">統計圖表</a> |
       <a href="leaderboard.html">排行榜</a>
     </div>
   </div>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="db.js"></script>
   <script>
     function toggleCustomInput(select) {
       const customInput = document.getElementById('customSutra');
       customInput.style.display = select.value === '其他' ? 'block' : 'none';
-    }
-
-    function checkIn() {
-      const nickname = document.getElementById('nickname').value.trim();
-      const selected = document.getElementById('sutraSelect').value;
-      const custom = document.getElementById('customSutra').value.trim();
-      const sutra = selected === '其他' ? custom : selected;
-      const count = parseInt(document.getElementById('count').value.trim()) || 1;
-
-      if (!nickname || !sutra) return alert('請填寫暱稱和經文名稱');
-
-      saveCheckIn(nickname, sutra, count)
-        .then(() => window.location.href = 'success.html')
-        .catch(e => alert('打卡失敗：' + e));
     }
   </script>
 </body>
