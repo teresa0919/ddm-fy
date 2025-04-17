@@ -68,6 +68,8 @@
       }
 
       try {
+        localStorage.setItem("nickname", nickname);
+        console.log("暱稱已儲存：", nickname);
         await checkIn(nickname, sutra, count);
         alert("打卡成功！");
         document.getElementById("nickname").value = "";
