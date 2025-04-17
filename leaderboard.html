@@ -2,40 +2,27 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>排行榜（動態版）</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>排行榜</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    ul { list-style: none; padding: 0; }
-    li {
-      background: #f0f0f0;
-      margin: 0.5rem 0;
-      padding: 0.75rem;
-      border-radius: 0.75rem;
-      font-size: 1rem;
-    }
-    h2 { margin-top: 2rem; color: #5c4033; }
-  </style>
 </head>
 <body>
   <div class="container">
-    <h1>誦經排行榜</h1>
+    <h2>誦經排行榜</h2>
 
-    <h2>佛經總類排行</h2>
+    <h3>佛經總類排行</h3>
     <ul id="sutra-rank"></ul>
 
-    <h2>個人誦持排行</h2>
+    <h3>個人誦持排行</h3>
     <ul id="user-rank"></ul>
 
-    <div class="links">
-      <a href="index.html">回首頁</a>
-    </div>
+    <a href="index.html" class="btn">回首頁</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
@@ -50,39 +37,36 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const userMap = {};
-    const sutraMap = {};
+    function maskName(name) {
+      if (name.length === 2) return name[0] + "○";
+      if (name.length === 3) return name[0] + "○" + name[2];
+      return name[0] + "○";
+    }
 
-    async function fetchData() {
-      const dbRef = ref(db);
-      const snapshot = await get(child(dbRef, 'checkins'));
-      if (!snapshot.exists()) {
-        document.getElementById("sutra-rank").innerHTML = "<li>無資料</li>";
-        document.getElementById("user-rank").innerHTML = "<li>無資料</li>";
-        return;
-      }
+    function renderRanking(data, targetEl, isUser = false) {
+      const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
+      targetEl.innerHTML = sorted.map(([key, val], i) => {
+        const displayName = isUser ? maskName(key) : key;
+        return `<li>${i + 1}. ${displayName}：${val} 次</li>`;
+      }).join("");
+    }
 
+    onValue(ref(db, "checkins"), (snapshot) => {
       const data = snapshot.val();
-      for (const date in data) {
-        for (const id in data[date]) {
-          const { nickname, sutra, count } = data[date][id];
-          if (!nickname || !sutra) continue;
-          userMap[nickname] = (userMap[nickname] || 0) + (parseInt(count) || 1);
-          sutraMap[sutra] = (sutraMap[sutra] || 0) + (parseInt(count) || 1);
+      const sutraCount = {};
+      const userCount = {};
+
+      for (const day in data) {
+        for (const record of Object.values(data[day])) {
+          const { nickname, sutra, count } = record;
+          sutraCount[sutra] = (sutraCount[sutra] || 0) + count;
+          userCount[nickname] = (userCount[nickname] || 0) + count;
         }
       }
 
-      updateList("sutra-rank", sutraMap);
-      updateList("user-rank", userMap);
-    }
-
-    function updateList(elementId, dataMap) {
-      const list = document.getElementById(elementId);
-      const sorted = Object.entries(dataMap).sort((a, b) => b[1] - a[1]);
-      list.innerHTML = sorted.map(([k, v], i) => `<li>${i + 1}. ${k}：${v} 次</li>`).join('');
-    }
-
-    fetchData();
+      renderRanking(sutraCount, document.getElementById("sutra-rank"));
+      renderRanking(userCount, document.getElementById("user-rank"), true);
+    });
   </script>
 </body>
 </html>
