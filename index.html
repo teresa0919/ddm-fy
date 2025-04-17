@@ -6,10 +6,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>每日打卡</title>
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #fdfaf6;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #4e342e;
+    }
+    .container {
+      max-width: 460px;
+      width: 90%;
+      margin: auto;
+      background: #f9f5f0;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #fbc02d;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .links {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+    }
+    .links a {
+      color: #4e342e;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
+
 <body>
   <div class="container">
     <h1>法喜打卡站</h1>
+    <div id="blessing" style="margin: 1rem auto 1.5rem; font-size: 1.1rem; color: #6d4c41; font-style: italic;"></div>
     <input type="text" id="nickname" placeholder="輸入你的暱稱" />
     <select id="sutraSelect" onchange="toggleCustomInput(this)">
       <option value="">請選擇誦持的經文</option>
@@ -36,8 +95,10 @@
       <option value="其他">其他（可自行輸入）</option>
     </select>
     <input type="text" id="customSutra" placeholder="請輸入其他經文名稱" style="display:none;" />
-    <input type="number" id="count" placeholder="誦持次數（預設為1）" min="1" />
+    <input type="number" id="count" placeholder="誦持次數" min="1" />
     <button id="submitBtn">立即打卡</button>
+    
+    <div id="blessing" style="margin-top: 1.5rem; font-size: 1.1rem; color: #6d4c41; font-style: italic;"></div>
     <div class="links">
       <a href="calendar.html">打卡月曆</a> |
       <a href="chart.html">統計圖表</a> |
@@ -50,7 +111,16 @@
       const customInput = document.getElementById('customSutra');
       customInput.style.display = select.value === '其他' ? 'block' : 'none';
     }
-  </script>
+  
+    const blessings = [
+      "願你法喜充滿，智慧增長。",
+      "善念如蓮，清淨自心。",
+      "一念清淨，一步光明。",
+      "願你持誦一咒，萬善俱圓。",
+      "心中有佛，所見皆淨。"
+    ];
+    document.getElementById("blessing").textContent = blessings[Math.floor(Math.random() * blessings.length)];
+</script>
 
   <script type="module">
     import { checkIn } from './db.js';
@@ -81,7 +151,7 @@ try {
   alert("打卡失敗：" + err.message);
 }
 
-    
+        alert("打卡成功！");
         document.getElementById("nickname").value = "";
         document.getElementById("sutraSelect").value = "";
         document.getElementById("customSutra").value = "";
@@ -91,6 +161,15 @@ try {
         alert("打卡失敗：" + err);
       }
     });
-  </script>
+  
+    const blessings = [
+      "願你法喜充滿，智慧增長。",
+      "善念如蓮，清淨自心。",
+      "一念清淨，一步光明。",
+      "願你持誦一咒，萬善俱圓。",
+      "心中有佛，所見皆淨。"
+    ];
+    document.getElementById("blessing").textContent = blessings[Math.floor(Math.random() * blessings.length)];
+</script>
 </body>
 </html>
