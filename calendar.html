@@ -82,8 +82,13 @@
 
     
 const nickname = localStorage.getItem("nickname");
+console.log("[debug] nickname from localStorage:", nickname);
 if (!nickname) {
-  document.getElementById("calendar").innerHTML = "<p style='text-align:center;color:#999;'>請先前往首頁打卡，我們就會記得你是誰囉！</p>";
+  document.getElementById("calendar").innerHTML = `
+    <div style="text-align:center;color:#999;padding:2rem;max-width:300px;margin:auto;">
+      <p>請先前往首頁打卡，</p>
+      <p>我們就會記得你是誰囉！</p>
+    </div>`;
   throw new Error("No nickname in localStorage");
 }
 
