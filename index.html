@@ -2,94 +2,65 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>每日打卡</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法喜打卡站</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>法喜打卡站</h1>
-    <input type="text" id="nickname" placeholder="輸入你的暱稱" />
-    <select id="sutraSelect" onchange="toggleCustomInput(this)">
-      <option value="">請選擇誦持的經文</option>
-      <option value="心經">心經</option>
-      <option value="普門品">普門品</option>
-      <option value="金剛經">金剛經</option>
-      <option value="佛說阿彌陀經">佛說阿彌陀經</option>
-      <option value="大悲咒">大悲咒</option>
-      <option value="十小咒">十小咒</option>
-      <option value="準提神咒">準提神咒</option>
-      <option value="往生淨土神咒">往生淨土神咒</option>
-      <option value="大悲懺">大悲懺</option>
-      <option value="法華經">法華經</option>
-      <option value="地藏懺">地藏懺</option>
-      <option value="解冤偈">解冤偈</option>
-      <option value="禮佛大懺悔文">禮佛大懺悔文</option>
-      <option value="藥師如來灌頂真言">藥師如來灌頂真言</option>
-      <option value="菩薩戒誦戒">菩薩戒誦戒</option>
-      <option value="授幽冥戒佛事">授幽冥戒佛事</option>
-      <option value="南無阿彌陀佛聖號">南無阿彌陀佛聖號</option>
-      <option value="南無地藏菩薩聖號">南無地藏菩薩聖號</option>
-      <option value="南無觀世音菩薩聖號">南無觀世音菩薩聖號</option>
-      <option value="南無藥師琉璃光如來佛號">南無藥師琉璃光如來佛號</option>
-      <option value="其他">其他（可自行輸入）</option>
-    </select>
-    <input type="text" id="customSutra" placeholder="請輸入其他經文名稱" style="display:none;" />
-    <input type="number" id="count" placeholder="誦持次數（預設為1）" min="1" />
-    <button id="submitBtn">立即打卡</button>
-    <div class="links">
-      <a href="calendar.html">打卡月曆</a> |
-      <a href="chart.html">統計圖表</a> |
-      <a href="leaderboard.html">排行榜</a>
-    </div>
+    <h2>法喜打卡站</h2>
+    <form id="checkinForm">
+      <input type="text" id="nickname" placeholder="請輸入暱稱" required><br>
+      <select id="sutra" required>
+        <option value="">請選擇誦持經文</option>
+        <option value="大悲咒">大悲咒</option>
+        <option value="準提神咒">準提神咒</option>
+        <option value="心經">心經</option>
+        <option value="十小咒">十小咒</option>
+        <option value="綠度母咒">綠度母咒</option>
+        <option value="南無地藏菩薩聖號">南無地藏菩薩聖號</option>
+        <option value="佛說阿彌陀經">佛說阿彌陀經</option>
+        <option value="大悲懺">大悲懺</option>
+        <option value="其他咒">其他咒</option>
+      </select><br>
+      <input type="number" id="count" placeholder="次數" required><br>
+      <button type="submit">立即打卡</button>
+    </form>
   </div>
 
-  <script>
-    function toggleCustomInput(select) {
-      const customInput = document.getElementById('customSutra');
-      customInput.style.display = select.value === '其他' ? 'block' : 'none';
-    }
-  </script>
-
   <script type="module">
-    import { checkIn } from './db.js';
-    document.getElementById("submitBtn").addEventListener("click", async () => {
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.firebasestorage.app",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.getElementById("checkinForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
       const nickname = document.getElementById("nickname").value.trim();
-      const sutraSelect = document.getElementById("sutraSelect");
-      const sutra = sutraSelect.value === "其他"
-        ? document.getElementById("customSutra").value.trim()
-        : sutraSelect.value;
-      const count = document.getElementById("count").value;
+      const sutra = document.getElementById("sutra").value;
+      const count = parseInt(document.getElementById("count").value);
 
-      if (!nickname || !sutra) {
-        alert("請輸入暱稱與誦持的經文！");
-        return;
-      }
+      const today = new Date().toISOString().slice(0, 10);
+      await push(ref(db, "checkins/" + today), {
+        nickname,
+        sutra,
+        count
+      });
 
-      try {
-        localStorage.setItem("nickname", nickname);
-        console.log("暱稱已儲存：", nickname);
-        
-try {
-  localStorage.setItem("nickname", nickname);
-  console.log("暱稱已儲存：", nickname);
-  await checkIn(nickname, sutra, count);
-  window.location.href = "success.html";
-} catch (err) {
-  console.error("打卡失敗：", err);
-  alert("打卡失敗：" + err.message);
-}
-
-        alert("打卡成功！");
-        document.getElementById("nickname").value = "";
-        document.getElementById("sutraSelect").value = "";
-        document.getElementById("customSutra").value = "";
-        document.getElementById("customSutra").style.display = "none";
-        document.getElementById("count").value = "";
-      } catch (err) {
-        alert("打卡失敗：" + err);
-      }
+      localStorage.setItem("nickname", nickname);
+      window.location.href = "success.html";
     });
   </script>
 </body>
