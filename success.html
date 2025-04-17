@@ -2,74 +2,66 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>打卡成功</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <style>
-    .blessing-box {
+    .success-box {
       text-align: center;
-      margin-top: 4rem;
+      padding: 2rem 1rem;
     }
-    .blessing-box h1 {
-      font-size: 2.5rem;
-      color: #a38bd4;
-      margin-bottom: 1rem;
-    }
-    .blessing-box p {
-      font-size: 1.5rem;
-      color: #4e342e;
+    .quote {
+      font-size: 1.25rem;
+      background-color: #f3e5f5;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin: 1rem auto;
+      color: #4a148c;
+      max-width: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .buttons {
-      text-align: center;
       margin-top: 2rem;
     }
     .buttons a {
-      margin: 0 1rem;
-      color: white;
-      background: #f3b46f;
+      display: inline-block;
+      background: #a38bd4;
+      color: #fff;
       padding: 0.75rem 1.25rem;
+      margin: 0.5rem;
       border-radius: 1rem;
       text-decoration: none;
-      transition: 0.2s;
-    }
-    .buttons a:hover {
-      background: #e69f4d;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">首頁</a>
-      <a href="calendar.html">打卡月曆</a>
-      <a href="chart.html">統計圖表</a>
-    </nav>
-  </header>
-
-  <main class="blessing-box">
-    <h1 id="blessing-title">功德圓滿！</h1>
-    <p id="blessing-text">願你日日清淨，念念安心！</p>
-
+  <div class="container success-box">
+    <h1>打卡成功！</h1>
+    <div class="quote" id="quoteDisplay">……</div>
     <div class="buttons">
-      <a href="index.html">返回首頁</a>
+      <a href="index.html">回首頁</a>
+      <a href="chart.html">統計圖表</a>
       <a href="leaderboard.html">排行榜</a>
     </div>
-  </main>
-
-  <footer>願以此功德 回向眾生法喜充滿</footer>
+  </div>
 
   <script>
-    const blessings = [
-      ["功德圓滿！", "願你日日清淨，念念安心！"],
-      ["福慧雙增！", "願你廣種福田，智慧光明！"],
-      ["法喜充滿！", "願你身心自在，善願成就！"],
-      ["願願圓滿！", "願你所有發願皆蒙加持！"],
-      ["善緣具足！", "願你行走之處皆是祝福！"]
+    const quotes = [
+      "一日不作，一日不食。",
+      "佛法在世間，不離世間覺。",
+      "念佛一聲，罪滅河沙。",
+      "隨喜功德，福慧雙增。",
+      "靜坐常思己過，閒談莫論人非。",
+      "莫忘初心，方得始終。",
+      "心淨則佛土淨，心安即是道場。",
+      "修行不離日常，持戒就在生活。",
+      "願以此功德，普及於一切。",
+      "正念當下，即是光明。"
     ];
-    const pick = blessings[Math.floor(Math.random() * blessings.length)];
-    document.getElementById("blessing-title").textContent = pick[0];
-    document.getElementById("blessing-text").textContent = pick[1];
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById("quoteDisplay").textContent = quote;
   </script>
 </body>
 </html>

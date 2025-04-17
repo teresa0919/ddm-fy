@@ -71,7 +71,7 @@
         localStorage.setItem("nickname", nickname);
         console.log("暱稱已儲存：", nickname);
         await checkIn(nickname, sutra, count);
-        alert("打卡成功！");
+        window.location.href = "success.html";
         document.getElementById("nickname").value = "";
         document.getElementById("sutraSelect").value = "";
         document.getElementById("customSutra").value = "";
