@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>願望收藏冊</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", sans-serif;
+      background: #fdfbf7;
+      color: #333;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      color: #5d4037;
+      margin-bottom: 1rem;
+    }
+    .wish-card {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      margin: 1rem auto;
+      max-width: 500px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      line-height: 1.6;
+    }
+    .date {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>願望收藏冊</h1>
+  <div id="wishList">載入中...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.appspot.com",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const nickname = localStorage.getItem("nickname") || "匿名";
+
+    const wishesRef = ref(db, "wishes");
+    const wishList = document.getElementById("wishList");
+    onValue(wishesRef, (snapshot) => {
+      const data = snapshot.val();
+      wishList.innerHTML = "";
+      if (!data) {
+        wishList.innerHTML = "<p>目前沒有願望記錄唷～</p>";
+        return;
+      }
+      const wishes = Object.values(data).filter(w => w.nickname === nickname);
+      if (wishes.length === 0) {
+        wishList.innerHTML = "<p>你還沒有留下任何願望唷～</p>";
+        return;
+      }
+      wishes.sort((a, b) => b.timestamp - a.timestamp);
+      wishes.forEach(w => {
+        const date = new Date(w.timestamp).toLocaleDateString();
+        const item = document.createElement("div");
+        item.className = "wish-card";
+        item.innerHTML = `<div class="date">${date}</div><div>${w.wish}</div>`;
+        wishList.appendChild(item);
+      });
+    });
+  </script>
+
+<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd;">
+  <a href="calendar.html" style="margin: 0 0.75rem; color: #4a148c; text-decoration: none;">打卡月曆</a> |
+  <a href="chart.html" style="margin: 0 0.75rem; color: #4a148c; text-decoration: none;">統計圖表</a> |
+  <a href="leaderboard.html" style="margin: 0 0.75rem; color: #4a148c; text-decoration: none;">排行榜</a> |
+  <a href="my_wishes.html" style="margin: 0 0.75rem; color: #4a148c; text-decoration: none;">願望收藏冊</a>
+</div>
+
+</body>
+</html>

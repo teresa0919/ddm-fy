@@ -22,9 +22,25 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem 1rem;
+      justify-content: center;
+      max-width: 400px;
+      margin: 2rem auto 0;
+    }
+    .buttons a {
       margin-top: 2rem;
     }
     .buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem 1rem;
+      justify-content: center;
+      max-width: 400px;
+      margin: 2rem auto 0;
+    }
+    .buttons a {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem 1rem;
@@ -55,6 +71,7 @@
       <a href="chart.html">統計圖表</a>
       <a href="leaderboard.html">排行榜</a>
       <a href="public_wishes.html">祈願牆</a>
+      <a href="my_wishes.html">願望收藏冊</a>
     </div>
 
     <div class="wish-box" style="margin-top: 2rem; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
