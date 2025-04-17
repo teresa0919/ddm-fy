@@ -1,82 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <title>排行榜</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #fefefe; }
-    h2 { margin-top: 30px; }
     ul { list-style: none; padding: 0; }
-    li { background: #f0f0f0; margin: 5px 0; padding: 10px; border-radius: 8px; }
+    li {
+      background: #f0f0f0;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+    }
+    h2 { margin-top: 2rem; color: #5c4033; }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-  <h1>誦經排行榜</h1>
+  <div class="container">
+    <h1>誦經排行榜</h1>
 
-  <h2>佛經總類排行</h2>
-  <ul id="sutraRanking"></ul>
+    <h2>佛經總類排行</h2>
+    <ul>
+      <li>1. 心經：18 次</li>
+      <li>2. 大悲咒：14 次</li>
+      <li>3. 金剛經：12 次</li>
+      <li>4. 普門品：9 次</li>
+    </ul>
 
-  <h2>個人誦持排行</h2>
-  <ul id="userRanking"></ul>
+    <h2>個人誦持排行</h2>
+    <ul>
+      <li>1. 小○：20 次</li>
+      <li>2. 明○：18 次</li>
+      <li>3. 慧○：14 次</li>
+      <li>4. 阿○：12 次</li>
+    </ul>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
-      authDomain: "ddm-fy.firebaseapp.com",
-      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "ddm-fy",
-      storageBucket: "ddm-fy.appspot.com",
-      messagingSenderId: "439647437849",
-      appId: "1:439647437849:web:b195f3e4d316d417969688"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const sutraCount = {};
-    const userCount = {};
-
-    function maskName(name) {
-      if (!name || name.length < 2) return name;
-      const parts = name.split("");
-      parts[1] = "○";
-      return parts.join("");
-    }
-
-    db.ref("checkins").once("value").then(snapshot => {
-      snapshot.forEach(dateSnap => {
-        dateSnap.forEach(userSnap => {
-          const user = maskName(userSnap.key);
-          userSnap.forEach(sutraSnap => {
-            const sutra = sutraSnap.key;
-            const count = parseInt(sutraSnap.val()) || 1;
-
-            sutraCount[sutra] = (sutraCount[sutra] || 0) + count;
-            userCount[user] = (userCount[user] || 0) + count;
-          });
-        });
-      });
-
-      const sortedSutra = Object.entries(sutraCount).sort((a,b) => b[1] - a[1]);
-      const sortedUser = Object.entries(userCount).sort((a,b) => b[1] - a[1]);
-
-      const sutraUl = document.getElementById("sutraRanking");
-      sortedSutra.forEach(([sutra, count], i) => {
-        const li = document.createElement("li");
-        li.textContent = `${i+1}. ${sutra}：${count} 次`;
-        sutraUl.appendChild(li);
-      });
-
-      const userUl = document.getElementById("userRanking");
-      sortedUser.forEach(([user, count], i) => {
-        const li = document.createElement("li");
-        li.textContent = `${i+1}. ${user}：${count} 次`;
-        userUl.appendChild(li);
-      });
-    });
-  </script>
+    <div class="links">
+      <a href="index.html">回首頁</a>
+    </div>
+  </div>
 </body>
 </html>
