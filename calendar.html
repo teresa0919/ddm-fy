@@ -80,7 +80,13 @@
     const firstDay = new Date(year, month, 1).getDay();
     const dateMap = {};
 
-    const nickname = localStorage.getItem("nickname");
+    
+const nickname = localStorage.getItem("nickname");
+if (!nickname) {
+  document.getElementById("calendar").innerHTML = "<p style='text-align:center;color:#999;'>請先前往首頁打卡，我們就會記得你是誰囉！</p>";
+  throw new Error("No nickname in localStorage");
+}
+
 
     async function loadData() {
       const snapshot = await get(child(ref(db), "checkins"));
