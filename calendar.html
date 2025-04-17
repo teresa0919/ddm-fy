@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -21,24 +20,18 @@
   </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">首頁</a>
-      <a href="calendar.html">打卡月曆</a>
-      <a href="chart.html">統計圖表</a>
-    </nav>
-  </header>
-  <main>
+  <div class="container">
     <h1>每月打卡紀錄</h1>
     <div class="calendar" id="calendar"></div>
-  </main>
-  <footer>願以此功德 回向眾生法喜充滿</footer>
-
+    <div class="links">
+      <a href="index.html">回首頁</a>
+    </div>
+  </div>
   <script>
     const calendar = document.getElementById("calendar");
     const today = new Date();
     const year = today.getFullYear();
-    const month = today.getMonth(); // 0-indexed
+    const month = today.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const weekdayNames = ['日','一','二','三','四','五','六'];
 
@@ -51,11 +44,10 @@
 
     const firstDay = new Date(year, month, 1).getDay();
     for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement('div');
-      calendar.appendChild(empty);
+      calendar.appendChild(document.createElement('div'));
     }
 
-    const mockChecked = [1, 2, 3, 5, 7, 11, 13, 18, 21]; // 模擬打卡日
+    const mockChecked = [1, 2, 3, 5, 7, 11, 13, 18, 21];
     for (let day = 1; day <= daysInMonth; day++) {
       const cell = document.createElement('div');
       cell.textContent = day;
