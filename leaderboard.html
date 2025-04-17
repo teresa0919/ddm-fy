@@ -3,7 +3,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>排行榜</title>
+  <title>排行榜（動態版）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -20,27 +20,69 @@
 </head>
 <body>
   <div class="container">
-    <h1>誦經排行榜</h1>
+    <h1>誦經排行榜（Firebase 資料）</h1>
 
     <h2>佛經總類排行</h2>
-    <ul>
-      <li>1. 心經：18 次</li>
-      <li>2. 大悲咒：14 次</li>
-      <li>3. 金剛經：12 次</li>
-      <li>4. 普門品：9 次</li>
-    </ul>
+    <ul id="sutra-rank"></ul>
 
     <h2>個人誦持排行</h2>
-    <ul>
-      <li>1. 小○：20 次</li>
-      <li>2. 明○：18 次</li>
-      <li>3. 慧○：14 次</li>
-      <li>4. 阿○：12 次</li>
-    </ul>
+    <ul id="user-rank"></ul>
 
     <div class="links">
       <a href="index.html">回首頁</a>
     </div>
   </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.firebasestorage.app",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const userMap = {};
+    const sutraMap = {};
+
+    async function fetchData() {
+      const dbRef = ref(db);
+      const snapshot = await get(child(dbRef, 'checkins'));
+      if (!snapshot.exists()) {
+        document.getElementById("sutra-rank").innerHTML = "<li>無資料</li>";
+        document.getElementById("user-rank").innerHTML = "<li>無資料</li>";
+        return;
+      }
+
+      const data = snapshot.val();
+      for (const date in data) {
+        for (const id in data[date]) {
+          const { nickname, sutra, count } = data[date][id];
+          if (!nickname || !sutra) continue;
+          userMap[nickname] = (userMap[nickname] || 0) + (parseInt(count) || 1);
+          sutraMap[sutra] = (sutraMap[sutra] || 0) + (parseInt(count) || 1);
+        }
+      }
+
+      updateList("sutra-rank", sutraMap);
+      updateList("user-rank", userMap);
+    }
+
+    function updateList(elementId, dataMap) {
+      const list = document.getElementById(elementId);
+      const sorted = Object.entries(dataMap).sort((a, b) => b[1] - a[1]);
+      list.innerHTML = sorted.map(([k, v], i) => `<li>${i + 1}. ${k}：${v} 次</li>`).join('');
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
