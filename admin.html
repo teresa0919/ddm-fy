@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>打卡資料管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-box {
+      max-width: 360px;
+      margin: 2rem auto;
+      text-align: center;
+      padding: 2rem;
+      border-radius: 1rem;
+      background: #f3e5f5;
+    }
+    input {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 80%;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 1rem;
+      background-color: #d32f2f;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container admin-box">
+    <h2>打卡資料管理</h2>
+    <p>輸入管理密碼即可清除所有打卡紀錄。</p>
+    <input type="password" id="adminPass" placeholder="輸入密碼">
+    <br/>
+    <button id="deleteBtn">清空所有打卡資料</button>
+    <div class="message" id="msg"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.firebasestorage.app",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const deleteBtn = document.getElementById("deleteBtn");
+    const msg = document.getElementById("msg");
+
+    deleteBtn.addEventListener("click", async () => {
+      const pass = document.getElementById("adminPass").value;
+      if (pass !== "deleteall123") {
+        msg.textContent = "密碼錯誤，無法刪除。";
+        msg.style.color = "red";
+        return;
+      }
+
+      try {
+        await remove(ref(db, "checkins"));
+        msg.textContent = "打卡資料已清空！";
+        msg.style.color = "green";
+      } catch (err) {
+        msg.textContent = "刪除失敗：" + err.message;
+        msg.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
