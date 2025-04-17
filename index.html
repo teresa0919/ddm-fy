@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -36,18 +37,48 @@
     </select>
     <input type="text" id="customSutra" placeholder="請輸入其他經文名稱" style="display:none;" />
     <input type="number" id="count" placeholder="誦持次數（預設為1）" min="1" />
-    <button onclick="alert('打卡成功！資料暫未寫入後端')">立即打卡</button>
+    <button id="submitBtn">立即打卡</button>
     <div class="links">
       <a href="calendar.html">打卡月曆</a> |
       <a href="chart.html">統計圖表</a> |
       <a href="leaderboard.html">排行榜</a>
     </div>
   </div>
+
   <script>
     function toggleCustomInput(select) {
       const customInput = document.getElementById('customSutra');
       customInput.style.display = select.value === '其他' ? 'block' : 'none';
     }
+  </script>
+
+  <script type="module">
+    import { checkIn } from './db.js';
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const nickname = document.getElementById("nickname").value.trim();
+      const sutraSelect = document.getElementById("sutraSelect");
+      const sutra = sutraSelect.value === "其他"
+        ? document.getElementById("customSutra").value.trim()
+        : sutraSelect.value;
+      const count = document.getElementById("count").value;
+
+      if (!nickname || !sutra) {
+        alert("請輸入暱稱與誦持的經文！");
+        return;
+      }
+
+      try {
+        await checkIn(nickname, sutra, count);
+        alert("打卡成功！");
+        document.getElementById("nickname").value = "";
+        document.getElementById("sutraSelect").value = "";
+        document.getElementById("customSutra").value = "";
+        document.getElementById("customSutra").style.display = "none";
+        document.getElementById("count").value = "";
+      } catch (err) {
+        alert("打卡失敗：" + err);
+      }
+    });
   </script>
 </body>
 </html>
