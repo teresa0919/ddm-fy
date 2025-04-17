@@ -3,7 +3,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>佛經統計圖表</title>
+  <title>統計圖表（Firebase 動態版）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,54 +18,91 @@
 </head>
 <body>
   <div class="container">
-    <h2>佛經誦持統計</h2>
+    <h2>佛經誦持統計（Firebase 資料）</h2>
     <canvas id="chart" width="320" height="320"></canvas>
-
     <div class="bar-container" id="barContainer"></div>
     <div class="links">
       <a href="index.html">回首頁</a>
     </div>
   </div>
 
-  <script>
-    const data = {
-      "心經": 18,
-      "金剛經": 12,
-      "大悲咒": 14,
-      "普門品": 9,
-      "藥師如來灌頂真言": 5
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.firebasestorage.app",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
     };
 
-    const ctx = document.getElementById("chart").getContext("2d");
-    new Chart(ctx, {
-      type: "pie",
-      data: {
-        labels: Object.keys(data),
-        datasets: [{
-          data: Object.values(data),
-          backgroundColor: ["#f9c74f", "#f9844a", "#90be6d", "#577590", "#f8961e"]
-        }]
-      },
-      options: {
-        plugins: {
-          legend: { position: "bottom" }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    async function fetchData() {
+      const snapshot = await get(child(ref(db), 'checkins'));
+      const data = snapshot.exists() ? snapshot.val() : {};
+      const statMap = {};
+
+      for (const date in data) {
+        for (const id in data[date]) {
+          const item = data[date][id];
+          const key = item.sutra?.trim();
+          const count = parseInt(item.count) || 1;
+          if (key) {
+            statMap[key] = (statMap[key] || 0) + count;
+          }
         }
       }
-    });
 
-    const max = Math.max(...Object.values(data));
-    const container = document.getElementById("barContainer");
-
-    for (const [sutra, count] of Object.entries(data)) {
-      const width = Math.round((count / max) * 100);
-      container.innerHTML += `
-        <div class="bar-item">
-          <span class="bar-label">${sutra}</span>
-          <span class="bar-fill" style="width:${width}%"></span>
-          <span class="bar-count">${count}</span>
-        </div>
-      `;
+      renderChart(statMap);
     }
+
+    function renderChart(statMap) {
+      const labels = Object.keys(statMap);
+      const counts = Object.values(statMap);
+      const max = Math.max(...counts);
+
+      // 圓餅圖
+      const ctx = document.getElementById("chart").getContext("2d");
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels,
+          datasets: [{
+            data: counts,
+            backgroundColor: [
+              "#f9c74f", "#f9844a", "#90be6d", "#577590", "#f8961e",
+              "#43aa8b", "#f3722c", "#b5838d", "#6a4c93", "#ffb4a2"
+            ]
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: "bottom" }
+          }
+        }
+      });
+
+      // 長條圖
+      const bar = document.getElementById("barContainer");
+      bar.innerHTML = labels.map((label, i) => {
+        const width = Math.round((counts[i] / max) * 100);
+        return `
+          <div class="bar-item">
+            <span class="bar-label">${label}</span>
+            <span class="bar-fill" style="width:${width}%"></span>
+            <span class="bar-count">${counts[i]}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    fetchData();
   </script>
 </body>
 </html>
