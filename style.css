@@ -1,66 +1,54 @@
 
 body {
-  font-family: "Noto Sans TC", sans-serif;
-  background-color: #f9f6f2;
+  font-family: sans-serif;
   margin: 0;
+  background: #fefdf8;
+  color: #3e2723;
+}
+.container {
   padding: 2rem;
+  max-width: 600px;
+  margin: auto;
+}
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #5d4037;
+}
+.chart-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  color: #333;
+  gap: 2rem;
+  padding: 1rem 0;
 }
-.container, .calendar, .bar-container, .content-wrapper {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.05);
-  padding: 2rem;
-  max-width: 420px;
+.pie-chart, .bar-chart {
   width: 100%;
-  margin-bottom: 2rem;
+  max-width: 400px;
 }
-h1, h2 {
+.bar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+.bar {
+  flex: 1;
+  background: #eee;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.fill {
+  background: #9ccc65;
+  height: 100%;
+  border-radius: 5px;
+}
+.btn {
+  display: inline-block;
+  margin-top: 2rem;
   text-align: center;
-  color: #5c4033;
-  margin-top: 0;
-}
-input, select, button {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-button {
-  background-color: #ffd54f;
-  border: none;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #ffca28;
-}
-.links, nav, footer {
-  text-align: center;
-  margin-top: 1rem;
-}
-.links a, nav a {
-  color: #007bff;
+  color: #2196f3;
   text-decoration: none;
-  margin: 0 0.5rem;
-}
-canvas {
-  max-width: 100%;
-}
-.bar-fill {
-  background-color: #a38bd4;
-}
-footer {
-  margin-top: auto;
-  font-size: 0.9rem;
-  color: #777;
+  font-weight: bold;
 }

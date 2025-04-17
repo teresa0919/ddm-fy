@@ -2,67 +2,29 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>統計圖表（優化版）</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>佛經統計圖表</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    canvas { margin-top: 2rem; max-width: 100%; }
-    .bar-container {
-      margin-top: 3rem;
-      max-width: 480px;
-      margin-inline: auto;
-      text-align: left;
-      font-size: 0.95rem;
-    }
-    .bar-item {
-      display: flex;
-      align-items: center;
-      margin: 0.5rem 0;
-    }
-    .bar-label {
-      flex: 0 0 120px;
-      text-align: right;
-      margin-right: 12px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-    .bar-track {
-      flex: 1;
-      background: #eee;
-      border-radius: 8px;
-      overflow: hidden;
-      height: 16px;
-      position: relative;
-    }
-    .bar-fill {
-      height: 100%;
-      border-radius: 8px;
-      background-color: #a38bd4;
-    }
-    .bar-count {
-      margin-left: 10px;
-      flex-shrink: 0;
-      min-width: 32px;
-      text-align: right;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
     <h2>佛經誦持統計</h2>
-    <canvas id="chart" width="320" height="320"></canvas>
-    <div class="bar-container" id="barContainer"></div>
-    <div class="links">
-      <a href="index.html">回首頁</a>
+    <div class="chart-section">
+      <div class="pie-chart">
+        <canvas id="pieChart"></canvas>
+      </div>
+      <div class="bar-chart">
+        <div id="barChart"></div>
+      </div>
     </div>
+    <a href="index.html" class="btn">回首頁</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
@@ -77,67 +39,62 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    async function fetchData() {
-      const snapshot = await get(child(ref(db), 'checkins'));
-      const data = snapshot.exists() ? snapshot.val() : {};
-      const statMap = {};
+    onValue(ref(db, "checkins"), (snapshot) => {
+      const data = snapshot.val();
+      const sutraCount = {};
 
       for (const date in data) {
-        for (const id in data[date]) {
-          const item = data[date][id];
-          const key = item.sutra?.trim();
-          const count = parseInt(item.count) || 1;
-          if (key) {
-            statMap[key] = (statMap[key] || 0) + count;
-          }
+        for (const record of Object.values(data[date])) {
+          const { sutra, count } = record;
+          sutraCount[sutra] = (sutraCount[sutra] || 0) + Number(count);
         }
       }
 
-      renderChart(statMap);
-    }
+      renderCharts(sutraCount);
+    });
 
-    function renderChart(statMap) {
-      const labels = Object.keys(statMap);
-      const counts = Object.values(statMap);
-      const max = Math.max(...counts);
+    function renderCharts(data) {
+      const labels = Object.keys(data);
+      const counts = Object.values(data);
 
-      // 圓餅圖
-      const ctx = document.getElementById("chart").getContext("2d");
+      const colors = [
+        "#e57373", "#ffeb3b", "#81c784", "#4db6ac", "#4fc3f7",
+        "#7986cb", "#ba68c8", "#f06292", "#ffb74d", "#aed581"
+      ];
+
+      const ctx = document.getElementById("pieChart").getContext("2d");
       new Chart(ctx, {
         type: "pie",
         data: {
-          labels,
+          labels: labels,
           datasets: [{
             data: counts,
-            backgroundColor: labels.map((_, i) =>
-              `hsl(${(i * 47) % 360}, 70%, 65%)`)
+            backgroundColor: colors,
           }]
         },
         options: {
+          responsive: true,
           plugins: {
-            legend: { position: "bottom" }
+            legend: {
+              position: "bottom"
+            }
           }
         }
       });
 
-      // 條形圖
-      const bar = document.getElementById("barContainer");
-      bar.innerHTML = labels.map((label, i) => {
-        const percent = Math.round((counts[i] / max) * 100);
-        const color = `hsl(${(i * 47) % 360}, 70%, 65%)`;
+      const barContainer = document.getElementById("barChart");
+      barContainer.innerHTML = labels.map((label, i) => {
         return `
           <div class="bar-item">
-            <div class="bar-label" title="${label}">${label}</div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width:${percent}%; background-color:${color};"></div>
+            <span>${label}</span>
+            <div class="bar">
+              <div class="fill" style="width:${(counts[i] / Math.max(...counts)) * 100}%"></div>
             </div>
-            <div class="bar-count">${counts[i]}</div>
+            <span>${counts[i]}</span>
           </div>
         `;
       }).join("");
     }
-
-    fetchData();
   </script>
 </body>
 </html>
