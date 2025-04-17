@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <title>佛經統計圖表</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: "Noto Sans TC", sans-serif; background-color: #fffaf0; text-align: center; padding: 2rem; }
-    canvas { margin-top: 2rem; }
-    .bar-container { margin-top: 3rem; max-width: 500px; margin-inline: auto; text-align: left; }
+    canvas { margin-top: 2rem; max-width: 100%; }
+    .bar-container { margin-top: 3rem; max-width: 420px; margin-inline: auto; text-align: left; }
     .bar-item { margin: 0.5rem 0; }
     .bar-label { display: inline-block; width: 140px; text-align: right; margin-right: 10px; }
     .bar-fill { display: inline-block; height: 16px; border-radius: 8px; background-color: #a38bd4; vertical-align: middle; }
@@ -17,10 +16,15 @@
   </style>
 </head>
 <body>
-  <h2>佛經誦持統計</h2>
-  <canvas id="chart" width="320" height="320"></canvas>
+  <div class="container">
+    <h2>佛經誦持統計</h2>
+    <canvas id="chart" width="320" height="320"></canvas>
 
-  <div class="bar-container" id="barContainer"></div>
+    <div class="bar-container" id="barContainer"></div>
+    <div class="links">
+      <a href="index.html">回首頁</a>
+    </div>
+  </div>
 
   <script>
     const data = {
@@ -56,22 +60,4 @@
       container.innerHTML += `
         <div class="bar-item">
           <span class="bar-label">${sutra}</span>
-          <span class="bar-fill" style="width:${width}%"></span>
-          <span class="bar-count">${count}</span>
-        </div>
-      `;
-    }
-  </script>
-
-  <div style="text-align:center; margin-top: 2rem;">
-    <a href="index.html" style="
-      background-color: #f3b46f;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 1rem;
-      text-decoration: none;
-      font-weight: bold;
-    ">回首頁</a>
-  </div>
-</body>
-</html>
+          <span class="
