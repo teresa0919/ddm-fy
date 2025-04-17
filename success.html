@@ -24,11 +24,19 @@
     .buttons {
       margin-top: 2rem;
     }
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 1rem;
+      justify-content: center;
+      max-width: 300px;
+      margin: 2rem auto 0;
+    }
     .buttons a {
       display: inline-block;
       background: #a38bd4;
       color: #fff;
-      padding: 0.75rem 1.25rem;
+      padding: 0.5rem 0.6rem; width: 115px; font-size: 0.95rem; text-align: center;
       margin: 0.5rem;
       border-radius: 1rem;
       text-decoration: none;
@@ -51,7 +59,7 @@
 
     <div class="wish-box" style="margin-top: 2rem; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
       <label for="wish" style="font-weight: bold;">留下你的願望：</label><br/>
-      <textarea id="wish" rows="3" placeholder="願我與家人平安健康……" style="width: 100%; margin-top: 0.5rem; border-radius: 1rem; padding: 0.75rem;"></textarea>
+      <textarea id="wish" rows="3" placeholder="願我與家人平安健康……" style="width: 90%; max-width: 360px; margin-top: 0.5rem; border-radius: 1rem; padding: 0.75rem;"></textarea>
       <div style="margin-top: 0.75rem;">
         <input type="checkbox" id="isPublic" />
         <label for="isPublic">願望可公開顯示在祈願牆（匿名）</label>
