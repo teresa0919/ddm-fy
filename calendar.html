@@ -3,7 +3,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>打卡月曆（互動版）</title>
+  <title>打卡月曆（個人查詢）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -46,7 +46,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>打卡月曆（Firebase 資料）</h1>
+    <h1>打卡月曆（僅顯示我的打卡）</h1>
     <div class="calendar" id="calendar"></div>
     <div class="record-list" id="recordList"></div>
     <div class="links">
@@ -80,12 +80,18 @@
     const firstDay = new Date(year, month, 1).getDay();
     const dateMap = {};
 
+    const nickname = localStorage.getItem("nickname");
+
     async function loadData() {
       const snapshot = await get(child(ref(db), "checkins"));
       const data = snapshot.exists() ? snapshot.val() : {};
       for (const date in data) {
         if (date.startsWith(`${year}-${(month+1).toString().padStart(2, '0')}`)) {
-          dateMap[date] = Object.values(data[date]);
+          // 篩選出該使用者的紀錄
+          const myRecords = Object.values(data[date]).filter(d => d.nickname === nickname);
+          if (myRecords.length > 0) {
+            dateMap[date] = myRecords;
+          }
         }
       }
       renderCalendar();
@@ -120,10 +126,9 @@
 
     function showRecords(dateStr) {
       const records = dateMap[dateStr];
-      recordList.innerHTML = `<h3>${dateStr} 打卡紀錄</h3>` +
+      recordList.innerHTML = `<h3>${dateStr} 我的打卡紀錄</h3>` +
         records.map(item =>
           `<div class="record-item">
-            暱稱：${item.nickname || "匿名"}<br/>
             經文：${item.sutra || "未知"}<br/>
             次數：${item.count || 1}
           </div>`
