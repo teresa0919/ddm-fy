@@ -19,6 +19,7 @@
         <div id="barChart"></div>
       </div>
     </div>
+    <div id="monthlySummary" style="margin-top: 2rem;"></div>
     <a href="index.html" class="btn">回首頁</a>
   </div>
 
@@ -42,15 +43,33 @@
     onValue(ref(db, "checkins"), (snapshot) => {
       const data = snapshot.val();
       const sutraCount = {};
+      const monthlySummary = {};
 
       for (const date in data) {
+        const [year, month] = date.split("-");
+        const key = `${year}-${month}`;
         for (const record of Object.values(data[date])) {
           const { sutra, count } = record;
           sutraCount[sutra] = (sutraCount[sutra] || 0) + Number(count);
+
+          if (!monthlySummary[key]) monthlySummary[key] = {};
+          monthlySummary[key][sutra] = (monthlySummary[key][sutra] || 0) + Number(count);
         }
       }
 
       renderCharts(sutraCount);
+
+      const summaryDiv = document.getElementById("monthlySummary");
+      summaryDiv.innerHTML = "<h3>每月誦持統計</h3>" + Object.entries(monthlySummary).map(([month, sutras]) => {
+        return `
+          <div style='margin-bottom: 1rem;'>
+            <strong>${month}</strong>
+            <ul>
+              ${Object.entries(sutras).map(([sutra, count]) => `<li>${sutra}：${count} 次</li>`).join("")}
+            </ul>
+          </div>
+        `;
+      }).join("");
     });
 
     function renderCharts(data) {
