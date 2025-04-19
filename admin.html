@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -48,29 +49,25 @@
   </div>
 
   <script type="module">
-    // 1. 引入 Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getDatabase, ref, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-    // 2. 配置 Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyDbYzBhcttD3Dn7QRKOiOM-c3RV-ArMl9I",
-      authDomain: "ddm-fy1-8fe29.firebaseapp.com",
-      databaseURL: "https://ddm-fy-8fe29-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "ddm-fy1-8fe29",
-      storageBucket: "ddm-fy1-8fe29.appspot.com",
-      messagingSenderId: "111333348405",
-      appId: "1:111333348405:web:095cbeabb7f67353f40d7c"
+      apiKey: "AIzaSyBU1AYuZzvZC1eW4nllG5qCAvcKXT90sg0",
+      authDomain: "ddm-fy.firebaseapp.com",
+      databaseURL: "https://ddm-fy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ddm-fy",
+      storageBucket: "ddm-fy.firebasestorage.app",
+      messagingSenderId: "439647437849",
+      appId: "1:439647437849:web:b195f3e4d316d417969688"
     };
 
-    // 3. 初始化 Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app); // 初始化 Realtime Database
+    const db = getDatabase(app);
 
     const deleteBtn = document.getElementById("deleteBtn");
     const msg = document.getElementById("msg");
 
-    // 4. 清空資料邏輯
     deleteBtn.addEventListener("click", async () => {
       const pass = document.getElementById("adminPass").value;
       if (pass !== "deleteall123") {
@@ -80,7 +77,6 @@
       }
 
       try {
-        // 刪除 "checkins" 節點資料
         await remove(ref(db, "checkins"));
         msg.textContent = "打卡資料已清空！";
         msg.style.color = "green";
