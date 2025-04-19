@@ -79,10 +79,12 @@
 
       try {
         // 刪除資料庫中的 checkins 節點
-        await remove(ref(db, "checkins"));
+        const checkinRef = ref(db, "checkins");
+        await remove(checkinRef); // 清空 "checkins" 節點
         msg.textContent = "打卡資料已清空！";
         msg.style.color = "green";
       } catch (err) {
+        // 捕捉錯誤
         msg.textContent = "刪除失敗：" + err.message;
         msg.style.color = "red";
       }
